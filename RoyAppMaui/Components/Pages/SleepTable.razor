@@ -2,7 +2,8 @@
 
 @using RoyAppMaui.Models
 
-<MudDataGrid T="Sleep" Items="@SleepItems"
+<MudDataGrid T="Sleep"
+             Items="@SleepItems"
              Bordered="true" Dense="true"
              EditMode="DataGridEditMode.Cell"
              EditTrigger="@(_editTriggerRowClick ? DataGridEditTrigger.OnRowClick : DataGridEditTrigger.Manual)"
@@ -32,20 +33,59 @@
         </CardHeaderContent>
     </MudCardHeader>
     <MudCardContent>
-        <MudTextField @bind-Value="sleep.Id" Label="Id" Variant="Variant.Text" Margin="Margin.Normal"></MudTextField>
-        <MudTimePicker @bind-Value="sleep.Bedtime" Label="Bedtime" Variant="Variant.Text" Margin="Margin.Normal"></MudTimePicker>
-        <MudTimePicker @bind-Value="sleep.Waketime" Label="Waketime" Variant="Variant.Text" Margin="Margin.Normal"></MudTimePicker>
+        <MudNumericField @bind-Value="sleep.Id"
+                         Label="Id"
+                         Variant="Variant.Text"
+                         Margin="Margin.Normal" />
+        <MudTimePicker @bind-Time="sleep.Bedtime"
+                       @ref="_bedtimepicker"
+                       AmPm="true"
+                       Editable="true"
+                       ImmediateText="true"
+                       Label="Bedtime"
+                       HelperText="Enter any numeric value as hours:minutes"
+                       PickerVariant="PickerVariant.Dialog"
+                       Elevation="12"
+                       Placeholder="hh:mm"
+                       TimeFormat="HH:mm"
+                       Variant="Variant.Text"
+                       Margin="Margin.Normal"
+                       PickerClosed="ResetBedTimeValidation" />
+        <MudTimePicker @bind-Time="sleep.Waketime"
+                       @ref="_waketimepicker"
+                       AmPm="true"
+                       Editable="true"
+                       ImmediateText="true"
+                       Label="Waketime"
+                       HelperText="Enter any numeric value as hours:minutes"
+                       PickerVariant="PickerVariant.Dialog"
+                       Elevation="12"
+                       Placeholder="hh:mm"
+                       TimeFormat="HH:mm"
+                       Variant="Variant.Text"
+                       Margin="Margin.Normal"
+                       PickerClosed="ResetWakeTimeValidation" />
         <br />
         <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="Save">Save</MudButton>
     </MudCardContent>
 </MudCard>
+
 @code {
-    private IEnumerable<Sleep> SleepItems = new List<Sleep>();
+    private List<Sleep> SleepItems = new List<Sleep>();
     private bool _editTriggerRowClick;
     private Sleep sleep = new Sleep();
+    private MudTimePicker? _bedtimepicker;
+    private MudTimePicker? _waketimepicker;
 
     private void Save()
     {
-        SleepItems.Append(sleep);
+        // TODO: Fix adding new item changes all items
+        SleepItems.Add(sleep);
     }
+
+    private void ResetBedTimeValidation() =>
+        _bedtimepicker?.ResetValidation();
+
+    private void ResetWakeTimeValidation() =>
+        _waketimepicker?.ResetValidation();
 }
