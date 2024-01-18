@@ -10,40 +10,11 @@ public partial class SleepTable
 {
     private readonly ObservableCollection<Sleep> _items = [];
     private Sleep _sleep = new();
-    private MudTimePicker? _bedtimepicker;
-    private MudTimePicker? _waketimepicker;
+    private MudTimePicker _bedtimepicker = new();
+    private MudTimePicker _waketimepicker = new();
 
-    private void Edit(Sleep sleep)
-    {
-        _sleep = sleep;
-    }
-
-    private void Save()
-    {
-        // TODO: Still trying to figure out editing vs adding items
-        var newsleep = new Sleep()
-        {
-            Id = _sleep.Id,
-            Bedtime = _sleep.Bedtime,
-            BedtimeRec = _sleep.BedtimeRec,
-            BedtimeDisplay = DateTime.Today.Add((TimeSpan)_sleep.Bedtime).ToString("hh:mm tt"),
-            Waketime = _sleep.Waketime,
-            WaketimeRec = _sleep.WaketimeRec,
-            WaketimeDisplay = DateTime.Today.Add((TimeSpan)_sleep.Waketime).ToString("hh:mm tt"),
-            Duration = GetDuration(_sleep.BedtimeRec, _sleep.WaketimeRec)
-        };
-        if (_sleep.Guid == Guid.Empty)
-        {
-            _items.Add(newsleep);
-        }
-        else
-        {
-            var index = _items.IndexOf(_sleep);
-            _items.RemoveAt(index);
-            _items.Insert(index, newsleep);
-        }
-        _sleep = new Sleep();
-    }
+    void AddNewItem() =>
+        _items.Add(new Sleep());
 
     private void HandleBedTimeChange(TimeSpan? newTime)
     {
@@ -53,6 +24,8 @@ public partial class SleepTable
         }
         _sleep.Bedtime = newTime;
         _sleep.BedtimeRec = decimal.Round(Convert.ToDecimal(TimeSpan.Parse(newTime.ToString() ?? "0:0", CultureInfo.InvariantCulture).TotalHours), 2);
+        _sleep.BedtimeDisplay = DateTime.Today.Add((TimeSpan)_sleep.Bedtime).ToString("hh:mm tt");
+        _sleep.Duration = GetDuration(_sleep.BedtimeRec, _sleep.WaketimeRec);
     }
 
     private void HandleWakeTimeChange(TimeSpan? newTime)
@@ -63,13 +36,18 @@ public partial class SleepTable
         }
         _sleep.Waketime = newTime;
         _sleep.WaketimeRec = decimal.Round(Convert.ToDecimal(TimeSpan.Parse(newTime.ToString() ?? "0:0", CultureInfo.InvariantCulture).TotalHours), 2);
+        _sleep.WaketimeDisplay = DateTime.Today.Add((TimeSpan)_sleep.Waketime).ToString("hh:mm tt");
+        _sleep.Duration = GetDuration(_sleep.BedtimeRec, _sleep.WaketimeRec);
     }
 
-    private void ResetBedTimeValidation() =>
-        _bedtimepicker?.ResetValidation();
+    private void RemoveItem(CellContext<Sleep> item)
+    {
+        var index = _items.IndexOf(item.Item);
+        _items.RemoveAt(index);
+    }
 
-    private void ResetWakeTimeValidation() =>
-        _waketimepicker?.ResetValidation();
+    private void StartedEditingItem(Sleep item) =>
+        _sleep = item;
 
     private static decimal GetDuration(decimal bedtime, decimal waketime)
     {

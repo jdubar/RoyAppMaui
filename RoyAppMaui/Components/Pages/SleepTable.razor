@@ -2,80 +2,57 @@
 
 @using RoyAppMaui.Models
 
+<MudButton OnClick="AddNewItem" Color="Color.Success" Class="add-item-btn">Add Item</MudButton>
 <MudDataGrid T="Sleep"
-             Items="@_items"
+             EditMode="DataGridEditMode.Form"
+             EditTrigger="DataGridEditTrigger.Manual"
+             Items="_items"
              Bordered="true"
              Elevation="25"
-             ReadOnly="false">
+             ReadOnly="false"
+             StartedEditingItem="StartedEditingItem">
     <Columns>
         <PropertyColumn Property="x => x.Id" />
-        <PropertyColumn Property="x => x.BedtimeDisplay" Title="Bedtime" />
+        <PropertyColumn Property="x => x.BedtimeDisplay" Title="Bedtime">
+            <EditTemplate>
+                <MudTimePicker @ref="_bedtimepicker"
+                               Label="Bedtime"
+                               Editable="true"
+                               Time="context.Item.Bedtime"
+                               AmPm="true"
+                               Placeholder="hh:mm"
+                               TimeFormat="HH:mm"
+                               ImmediateText="true"
+                               Variant="Variant.Text"
+                               PickerClosed="_bedtimepicker.ResetAsync"
+                               PickerVariant="PickerVariant.Dialog"
+                               TimeChanged="HandleBedTimeChange" />
+            </EditTemplate>
+        </PropertyColumn>
         <PropertyColumn Property="x => x.BedtimeRec" Title="(As Decimal)" IsEditable="false" />
-        <PropertyColumn Property="x => x.WaketimeDisplay" Title="Waketime" />
+        <PropertyColumn Property="x => x.WaketimeDisplay" Title="Waketime">
+            <EditTemplate>
+                <MudTimePicker @ref="_waketimepicker"
+                               Label="Waketime"
+                               Editable="true"
+                               Time="context.Item.Waketime"
+                               AmPm="true"
+                               Placeholder="hh:mm"
+                               TimeFormat="HH:mm"
+                               ImmediateText="true"
+                               Variant="Variant.Text"
+                               PickerClosed="_waketimepicker.ResetAsync"
+                               PickerVariant="PickerVariant.Dialog"
+                               TimeChanged="HandleWakeTimeChange" />
+            </EditTemplate>
+        </PropertyColumn>
         <PropertyColumn Property="x => x.WaketimeRec" Title="(As Decimal)" IsEditable="false" />
         <PropertyColumn Property="x => x.Duration" IsEditable="false" />
-        <TemplateColumn CellClass="d-flex justify-end">
+        <TemplateColumn CellClass="d-flex justify-center">
             <CellTemplate>
-                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@(()=>Edit(@context.Item))" />
+                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => RemoveItem(context))" />
             </CellTemplate>
         </TemplateColumn>
     </Columns>
 </MudDataGrid>
-<br />
-<MudCard Elevation="25">
-    <MudCardHeader>
-        <CardHeaderContent>
-            <MudText Typo="Typo.h6">Add / Edit Sleep</MudText>
-        </CardHeaderContent>
-    </MudCardHeader>
-    <MudCardContent>
-        <MudNumericField @bind-Value="_sleep.Id"
-                         Label="Id"
-                         Variant="Variant.Text"
-                         Margin="Margin.Normal" />
-        <MudStack Row="true">
-            <MudTimePicker @ref="_bedtimepicker"
-                           AmPm="true"
-                           Editable="true"
-                           Elevation="12"
-                           HelperText="Enter any numeric value as hours:minutes"
-                           ImmediateText="true"
-                           Label="Bedtime"
-                           Margin="Margin.Normal"
-                           PickerClosed="ResetBedTimeValidation"
-                           PickerVariant="PickerVariant.Dialog"
-                           Placeholder="hh:mm"
-                           Time="_sleep.Bedtime"
-                           TimeChanged="HandleBedTimeChange"
-                           TimeFormat="HH:mm"
-                           Variant="Variant.Text"/>
-            <MudNumericField Value="_sleep.BedtimeRec"
-                             Label="Decimal"
-                             Variant="Variant.Text"
-                             Margin="Margin.Normal" />
-        </MudStack>
-        <MudStack Row="true">
-            <MudTimePicker @ref="_waketimepicker"
-                           AmPm="true"
-                           Editable="true"
-                           Elevation="12"
-                           HelperText="Enter any numeric value as hours:minutes"
-                           ImmediateText="true"
-                           Label="Waketime"
-                           Margin="Margin.Normal"
-                           PickerClosed="ResetWakeTimeValidation"
-                           PickerVariant="PickerVariant.Dialog"
-                           Placeholder="hh:mm"
-                           Time="_sleep.Waketime"
-                           TimeChanged="HandleWakeTimeChange"
-                           TimeFormat="HH:mm"
-                           Variant="Variant.Text" />
-            <MudNumericField Value="_sleep.WaketimeRec"
-                             Label="Decimal"
-                             Variant="Variant.Text"
-                             Margin="Margin.Normal" />
-        </MudStack>
-        <br />
-        <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="Save">Save</MudButton>
-    </MudCardContent>
-</MudCard>
