@@ -1,5 +1,8 @@
-﻿using MudBlazor;
+﻿using Microsoft.AspNetCore.Components;
 
+using MudBlazor;
+
+using RoyAppMaui.Components.Modals;
 using RoyAppMaui.Models;
 
 using System.Collections.ObjectModel;
@@ -8,6 +11,8 @@ using System.Globalization;
 namespace RoyAppMaui.Components.Pages;
 public partial class SleepTable
 {
+    [Inject] private IDialogService DialogService { get; set; } = new DialogService();
+
     private readonly ObservableCollection<Sleep> _items = [];
     private Sleep _sleep = new();
     private MudTimePicker _bedtimepicker = new();
@@ -40,8 +45,25 @@ public partial class SleepTable
         _sleep.Duration = GetDuration(_sleep.BedtimeRec, _sleep.WaketimeRec);
     }
 
-    private void RemoveItem(CellContext<Sleep> item)
+    private async Task RemoveItem(CellContext<Sleep> item)
     {
+        var parameters = new DialogParameters<ConfirmDelete>
+        {
+            { x => x.ContentText, "Do you really want to delete this item? This process cannot be undone." }
+        };
+
+        var options = new DialogOptions()
+        {
+            CloseButton = true,
+            MaxWidth = MaxWidth.ExtraSmall
+        };
+
+        var confirmModal = DialogService.Show<ConfirmDelete>("Delete", parameters, options);
+        var result = await confirmModal.Result;
+        if (result.Canceled)
+        {
+            return;
+        }
         var index = _items.IndexOf(item.Item);
         _items.RemoveAt(index);
     }
