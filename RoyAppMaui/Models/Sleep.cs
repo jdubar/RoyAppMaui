@@ -1,5 +1,5 @@
 ﻿namespace RoyAppMaui.Models;
-public record Sleep
+public class Sleep
 {
     public int Id { get; set; }
     public TimeSpan? Bedtime { get; set; } = new TimeSpan(0, 0, 0);
