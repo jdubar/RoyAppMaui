@@ -2,8 +2,9 @@
 
 @using RoyAppMaui.Models
 
-<MudButton OnClick="AddNewItem" Color="Color.Success" Class="add-item-btn">Add Item</MudButton>
-<MudDataGrid T="Sleep"
+<MudDataGrid T="Sleep" Height="calc(100vh - 210px)"
+             FixedHeader="true"
+             FixedFooter="true"
              EditMode="DataGridEditMode.Form"
              EditTrigger="DataGridEditTrigger.Manual"
              Items="_items"
@@ -12,7 +13,14 @@
              ReadOnly="false"
              StartedEditingItem="StartedEditingItem">
     <Columns>
-        <PropertyColumn Property="x => x.Id" />
+        <PropertyColumn Property="x => x.Id">
+            <EditTemplate>
+                <MudNumericField @bind-Value="context.Item.Id"
+                                 Label="Id"
+                                 Min="0"
+                                 Max="9999" />
+            </EditTemplate>
+        </PropertyColumn>
         <PropertyColumn Property="x => x.BedtimeDisplay" Title="Bedtime">
             <EditTemplate>
                 <MudTimePicker @ref="_bedtimepicker"
@@ -48,11 +56,22 @@
         </PropertyColumn>
         <PropertyColumn Property="x => x.WaketimeRec" Title="(As Decimal)" IsEditable="false" />
         <PropertyColumn Property="x => x.Duration" IsEditable="false" />
-        <TemplateColumn CellClass="d-flex justify-center">
+        <TemplateColumn CellClass="d-flex justify-center flex-grow-1">
             <CellTemplate>
-                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
-                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@(() => RemoveItem(context))" />
+                <MudIconButton Size="@Size.Small"
+                               Icon="@Icons.Material.Filled.Edit"
+                               OnClick="@context.Actions.StartEditingItemAsync" />
+                <MudIconButton Size="@Size.Small"
+                               Icon="@Icons.Material.Filled.Delete"
+                               Color="Color.Error"
+                               OnClick="@(() => RemoveItem(context))" />
             </CellTemplate>
         </TemplateColumn>
     </Columns>
+    <PagerContent>
+        <MudDataGridPager T="Sleep" />
+    </PagerContent>
 </MudDataGrid>
+<MudItem Style="position:fixed; bottom:15px;right:0" Class="d-flex justify-end flex-grow-1 gap-4 mr-5">
+    <MudFab Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" OnClick="AddNewItem" />
+</MudItem>
