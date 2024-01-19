@@ -94,7 +94,7 @@ public partial class SleepTable
             WaketimeAvg = 0;
             return;
         }
-        BedtimeAvg = _items.Sum(s => s.BedtimeRec) / _items.Count;
-        WaketimeAvg = _items.Sum(s => s.WaketimeRec) / _items.Count;
+        BedtimeAvg = decimal.Round(_items.Sum(s => s.BedtimeRec) / _items.Count, 2);
+        WaketimeAvg = decimal.Round(_items.Sum(s => s.WaketimeRec) / _items.Count, 2);
     }
 }
