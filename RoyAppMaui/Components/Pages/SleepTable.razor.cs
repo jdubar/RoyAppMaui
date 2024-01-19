@@ -18,6 +18,9 @@ public partial class SleepTable
     private MudTimePicker _bedtimepicker = new();
     private MudTimePicker _waketimepicker = new();
 
+    private decimal BedtimeAvg {  get; set; }
+    private decimal WaketimeAvg {  get; set; }
+
     void AddNewItem() =>
         _items.Add(new Sleep());
 
@@ -66,7 +69,11 @@ public partial class SleepTable
         }
         var index = _items.IndexOf(item.Item);
         _items.RemoveAt(index);
+        GetAverages();
     }
+
+    private void CommittedItemChanges(Sleep sleep) =>
+        GetAverages();
 
     private void StartedEditingItem(Sleep item) =>
         _sleep = item;
@@ -77,5 +84,17 @@ public partial class SleepTable
         return duration > 0
             ? duration
             : 24 + duration;
+    }
+
+    private void GetAverages()
+    {
+        if (_items.Count == 0)
+        {
+            BedtimeAvg = 0;
+            WaketimeAvg = 0;
+            return;
+        }
+        BedtimeAvg = _items.Sum(s => s.BedtimeRec) / _items.Count;
+        WaketimeAvg = _items.Sum(s => s.WaketimeRec) / _items.Count;
     }
 }

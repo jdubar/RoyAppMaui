@@ -2,7 +2,7 @@
 
 @using RoyAppMaui.Models
 
-<MudDataGrid T="Sleep" Height="calc(100vh - 210px)"
+<MudDataGrid T="Sleep" Height="calc(100vh - 220px)"
              FixedHeader="true"
              FixedFooter="true"
              EditMode="DataGridEditMode.Form"
@@ -11,7 +11,8 @@
              Bordered="true"
              Elevation="25"
              ReadOnly="false"
-             StartedEditingItem="StartedEditingItem">
+             StartedEditingItem="StartedEditingItem"
+             CommittedItemChanges="CommittedItemChanges">
     <Columns>
         <PropertyColumn Property="x => x.Id">
             <EditTemplate>
@@ -72,6 +73,20 @@
         <MudDataGridPager T="Sleep" />
     </PagerContent>
 </MudDataGrid>
+<div style="width: 50%;">
+    <MudNumericField @bind-Value="BedtimeAvg"
+                     Label="Bedtime Avg"
+                     Variant="Variant.Outlined"
+                     ReadOnly="true"
+                     HideSpinButtons="true"
+                     Min="0" Class="d-inline-flex pa-3" />
+    <MudNumericField @bind-Value="WaketimeAvg"
+                     Label="Waketime Avg"
+                     Variant="Variant.Outlined"
+                     ReadOnly="true"
+                     HideSpinButtons="true"
+                     Min="0" Class="d-inline-flex pa-3" />
+</div>
 <MudItem Style="position:fixed; bottom:15px;right:0" Class="d-flex justify-end flex-grow-1 gap-4 mr-5">
     <MudFab Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" OnClick="AddNewItem" />
 </MudItem>
