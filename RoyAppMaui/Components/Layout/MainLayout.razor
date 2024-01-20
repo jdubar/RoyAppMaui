@@ -16,7 +16,9 @@
             <MudMenuItem>Profile</MudMenuItem>
         </MudMenu>
     </MudAppBar>
-    <MudMainContent>
-        @Body
-    </MudMainContent>
+    <CascadingValue Value="ImportFilePath">
+        <MudMainContent>
+            @Body
+        </MudMainContent>
+    </CascadingValue>
 </MudLayout>

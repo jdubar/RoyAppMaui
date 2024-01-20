@@ -1,8 +1,13 @@
-﻿using MudBlazor;
+﻿using Microsoft.AspNetCore.Components;
+
+using MudBlazor;
 
 namespace RoyAppMaui.Components.Layout;
 public partial class MainLayout
 {
+    [CascadingParameter]
+    public string ImportFilePath { get; set; } = string.Empty;
+
     private bool _isDarkMode;
     private MudThemeProvider _mudThemeProvider;
 
