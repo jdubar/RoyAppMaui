@@ -11,7 +11,7 @@ using System.Globalization;
 namespace RoyAppMaui.Components.Pages;
 public partial class SleepTable
 {
-    [Inject] private IDialogService DialogService { get; set; } = new DialogService();
+    [Inject] private IDialogService DialogService { get; set; }
 
     private readonly ObservableCollection<Sleep> _items = [];
     private Sleep _sleep = new();
@@ -21,8 +21,13 @@ public partial class SleepTable
     private decimal BedtimeAvg {  get; set; }
     private decimal WaketimeAvg {  get; set; }
 
-    void AddNewItem() =>
+    private void AddNewItem() =>
         _items.Add(new Sleep());
+
+    private void ImportData()
+    {
+        // TODO: Add import logic here
+    }
 
     private void HandleBedTimeChange(TimeSpan? newTime)
     {
@@ -78,14 +83,6 @@ public partial class SleepTable
     private void StartedEditingItem(Sleep item) =>
         _sleep = item;
 
-    private static decimal GetDuration(decimal bedtime, decimal waketime)
-    {
-        var duration = waketime - bedtime;
-        return duration > 0
-            ? duration
-            : 24 + duration;
-    }
-
     private void GetAverages()
     {
         if (_items.Count == 0)
@@ -96,5 +93,13 @@ public partial class SleepTable
         }
         BedtimeAvg = decimal.Round(_items.Sum(s => s.BedtimeRec) / _items.Count, 2);
         WaketimeAvg = decimal.Round(_items.Sum(s => s.WaketimeRec) / _items.Count, 2);
+    }
+
+    private static decimal GetDuration(decimal bedtime, decimal waketime)
+    {
+        var duration = waketime - bedtime;
+        return duration > 0
+            ? duration
+            : 24 + duration;
     }
 }

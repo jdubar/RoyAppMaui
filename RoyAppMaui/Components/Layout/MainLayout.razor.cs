@@ -3,12 +3,8 @@
 namespace RoyAppMaui.Components.Layout;
 public partial class MainLayout
 {
-    private bool _drawerOpen = false;
     private bool _isDarkMode;
     private MudThemeProvider _mudThemeProvider;
-
-    private void DrawerToggle() =>
-        _drawerOpen = !_drawerOpen;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
