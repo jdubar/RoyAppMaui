@@ -4,14 +4,17 @@ using MudBlazor;
 
 using RoyAppMaui.Components.Modals;
 using RoyAppMaui.Models;
+using RoyAppMaui.Services;
 
 using System.Collections.ObjectModel;
+using System.Diagnostics.Metrics;
 using System.Globalization;
 
 namespace RoyAppMaui.Components.Pages;
 public partial class SleepTable
 {
     [Inject] private IDialogService DialogService { get; set; }
+    [Inject] private NotifyStateService? Service { get; set; }
 
     private readonly ObservableCollection<Sleep> _items = [];
     private Sleep _sleep = new();
@@ -21,12 +24,56 @@ public partial class SleepTable
     private decimal BedtimeAvg {  get; set; }
     private decimal WaketimeAvg {  get; set; }
 
+    protected override void OnInitialized()
+    {
+        Service.EventClick += this.Increment;
+        base.OnInitialized();
+    }
+
+    private void Increment(object? sender, EventArgs e)
+    {
+        PickAndShow();
+        this.InvokeAsync(StateHasChanged);
+    }
+
     private void AddNewItem() =>
         _items.Add(new Sleep());
 
-    private void ImportData()
+    public async Task<FileResult> PickAndShow()
     {
-        // TODO: Add import logic here
+        var customFileType = new FilePickerFileType(
+            new Dictionary<DevicePlatform, IEnumerable<string>>
+            {
+                { DevicePlatform.iOS, new[] { "public.my.comic.extension" } }, // UTType values
+                { DevicePlatform.Android, new[] { "application/comics" } }, // MIME type
+                { DevicePlatform.WinUI, new[] { ".csv", ".cbz" } }, // file extension
+                { DevicePlatform.Tizen, new[] { "*/*" } },
+                { DevicePlatform.macOS, new[] { "cbr", "cbz" } }, // UTType values
+            });
+
+        PickOptions options = new()
+        {
+            PickerTitle = "Please select a comic file",
+            FileTypes = customFileType,
+        };
+
+        try
+        {
+            var result = await FilePicker.Default.PickAsync(options);
+            if (result != null && result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
+            {
+                using var stream = await result.OpenReadAsync();
+                var image = ImageSource.FromStream(() => stream);
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            // The user canceled or something went wrong
+        }
+
+        return null;
     }
 
     private void HandleBedTimeChange(TimeSpan? newTime)

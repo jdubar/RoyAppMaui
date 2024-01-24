@@ -2,6 +2,8 @@
 
 using MudBlazor.Services;
 
+using RoyAppMaui.Services;
+
 namespace RoyAppMaui;
 public static class MauiProgram
 {
@@ -17,9 +19,10 @@ public static class MauiProgram
 
         builder.Services.AddMauiBlazorWebView();
         builder.Services.AddMudServices();
+        builder.Services.AddScoped<NotifyStateService>();
 
 #if DEBUG
-		builder.Services.AddBlazorWebViewDeveloperTools();
+        builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
 #endif
 

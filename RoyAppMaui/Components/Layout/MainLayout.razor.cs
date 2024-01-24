@@ -2,11 +2,12 @@
 
 using MudBlazor;
 
+using RoyAppMaui.Services;
+
 namespace RoyAppMaui.Components.Layout;
 public partial class MainLayout
 {
-    [CascadingParameter]
-    public string ImportFilePath { get; set; } = string.Empty;
+    [Inject] private NotifyStateService? Service { get; set; }
 
     private bool _isDarkMode;
     private MudThemeProvider _mudThemeProvider;
@@ -20,6 +21,9 @@ public partial class MainLayout
             StateHasChanged();
         }
     }
+
+    private void IncrementCount() =>
+        Service.NotifyEventClick(this);
 
     private Task OnSystemPreferenceChanged(bool newValue)
     {
