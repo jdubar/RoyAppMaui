@@ -3,8 +3,6 @@ public class NotifyStateService
 {
     public event EventHandler? EventClick;
 
-    public void NotifyEventClick(object sender)
-    {
+    public void NotifyOnEventClick(object sender) =>
         EventClick?.Invoke(sender, EventArgs.Empty);
-    }
 }
