@@ -12,8 +12,12 @@
         </MudAvatar>
         <MudText Typo="Typo.h5" Class="ml-3">RoyApp</MudText>
         <MudSpacer />
-        <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.BottomCenter" >
-            <MudMenuItem OnClick="IncrementCount">Pick a file</MudMenuItem>
+        <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" >
+            <MudMenuItem Icon="@Icons.Material.Filled.FileUpload"
+                         OnClick="HandleFileImportClick"
+                         Style="width:220px">
+                         Import Data File
+            </MudMenuItem>
         </MudMenu>
     </MudAppBar>
     <MudMainContent>
