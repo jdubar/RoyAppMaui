@@ -2,14 +2,15 @@
 
 using MudBlazor;
 
+using RoyAppMaui.Services;
+
 namespace RoyAppMaui.Components.Layout;
 public partial class MainLayout
 {
-    [CascadingParameter]
-    public string ImportFilePath { get; set; } = string.Empty;
+    [Inject] private NotifyStateService NotifyService { get; set; } = default!;
 
     private bool _isDarkMode;
-    private MudThemeProvider _mudThemeProvider;
+    private MudThemeProvider _mudThemeProvider = default!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -20,6 +21,9 @@ public partial class MainLayout
             StateHasChanged();
         }
     }
+
+    private void HandleFileImportClick() =>
+        NotifyService.NotifyOnEventClick(this);
 
     private Task OnSystemPreferenceChanged(bool newValue)
     {

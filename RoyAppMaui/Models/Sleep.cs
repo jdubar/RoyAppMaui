@@ -1,7 +1,7 @@
 ﻿namespace RoyAppMaui.Models;
 public class Sleep
 {
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     public TimeSpan? Bedtime { get; set; } = new TimeSpan(0, 0, 0);
     public decimal BedtimeRec { get; set; }
     public string BedtimeDisplay { get; set; } = "12:00 AM";

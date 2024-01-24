@@ -1,17 +1,22 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.VisualBasic.FileIO;
 
 using MudBlazor;
 
 using RoyAppMaui.Components.Modals;
+using RoyAppMaui.Interfaces;
 using RoyAppMaui.Models;
+using RoyAppMaui.Services;
 
 using System.Collections.ObjectModel;
-using System.Globalization;
 
 namespace RoyAppMaui.Components.Pages;
 public partial class SleepTable
 {
-    [Inject] private IDialogService DialogService { get; set; }
+    [Inject] private IDateTimeService DateTimeService { get; set; } = default!;
+    [Inject] private IDialogService DialogService { get; set; } = default!;
+    [Inject] private IFileService FileService { get; set; } = default!;
+    [Inject] private NotifyStateService NotifyService { get; set; } = default!;
 
     private readonly ObservableCollection<Sleep> _items = [];
     private Sleep _sleep = new();
@@ -21,39 +26,123 @@ public partial class SleepTable
     private decimal BedtimeAvg {  get; set; }
     private decimal WaketimeAvg {  get; set; }
 
+    protected override void OnInitialized()
+    {
+        NotifyService.EventClick += OnFileImportClick;
+        base.OnInitialized();
+    }
+
     private void AddNewItem() =>
         _items.Add(new Sleep());
 
-    private void ImportData()
-    {
-        // TODO: Add import logic here
-    }
+    private void ClearTable() =>
+        _items.Clear();
 
-    private void HandleBedTimeChange(TimeSpan? newTime)
+    private void HandleTimeChange(MudTimePicker timepicker, TimeSpan? newTime)
     {
-        if (newTime == null)
+        if (newTime == null || timepicker == null)
         {
             return;
         }
-        _sleep.Bedtime = newTime;
-        _sleep.BedtimeRec = decimal.Round(Convert.ToDecimal(TimeSpan.Parse(newTime.ToString() ?? "0:0", CultureInfo.InvariantCulture).TotalHours), 2);
-        _sleep.BedtimeDisplay = DateTime.Today.Add((TimeSpan)_sleep.Bedtime).ToString("hh:mm tt");
-        _sleep.Duration = GetDuration(_sleep.BedtimeRec, _sleep.WaketimeRec);
+        if (timepicker == _bedtimepicker)
+        {
+            SetBedtimeModelInfo(ref _sleep, (TimeSpan)newTime);
+        }
+        else
+        {
+            SetWaketimeModelInfo(ref _sleep, (TimeSpan)newTime);
+        }
+        SetDuration(ref _sleep, _sleep.BedtimeRec, _sleep.WaketimeRec);
     }
 
-    private void HandleWakeTimeChange(TimeSpan? newTime)
+    private async Task ImportFileData()
     {
-        if (newTime == null)
+        var selectedFile = await FileService.SelectImportFile();
+        if (selectedFile != null && selectedFile.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
+        {
+            ClearTable();
+            using (var parser = new TextFieldParser(selectedFile.FullPath))
+            {
+                parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
+                parser.SetDelimiters(",");
+                while (!parser.EndOfData)
+                {
+                    var sleep = new Sleep();
+                    var fields = parser.ReadFields();
+                    if (fields != null && fields.Length == 3)
+                    {
+                        sleep.Id = fields[0];
+                        SetBedtimeModelInfo(ref sleep, DateTimeService.StringToTimeSpan(fields[1]));
+                        SetWaketimeModelInfo(ref sleep, DateTimeService.StringToTimeSpan(fields[2]));
+                        SetDuration(ref sleep, sleep.BedtimeRec, sleep.WaketimeRec);
+                        _items.Add(sleep);
+                    }
+                }
+            }
+            SetAveragesInView();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void OnCommittedItemChanges(Sleep sleep) =>
+        SetAveragesInView();
+
+    private void OnFileImportClick(object? sender, EventArgs e)
+    {
+        _ = Task.Run(ImportFileData);
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OnStartedEditingItem(Sleep item) =>
+        _sleep = item;
+
+    private async Task RemoveItemAsync(Sleep item)
+    {
+        var result = await ShowConfirmDeleteDialogAsync();
+        if (result.Canceled)
         {
             return;
         }
-        _sleep.Waketime = newTime;
-        _sleep.WaketimeRec = decimal.Round(Convert.ToDecimal(TimeSpan.Parse(newTime.ToString() ?? "0:0", CultureInfo.InvariantCulture).TotalHours), 2);
-        _sleep.WaketimeDisplay = DateTime.Today.Add((TimeSpan)_sleep.Waketime).ToString("hh:mm tt");
-        _sleep.Duration = GetDuration(_sleep.BedtimeRec, _sleep.WaketimeRec);
+        var index = _items.IndexOf(item);
+        _items.RemoveAt(index);
+        SetAveragesInView();
     }
 
-    private async Task RemoveItem(CellContext<Sleep> item)
+    private void SetAveragesInView()
+    {
+        if (_items.Count == 0)
+        {
+            BedtimeAvg = 0;
+            WaketimeAvg = 0;
+            return;
+        }
+        BedtimeAvg = decimal.Round(_items.Sum(s => s.BedtimeRec) / _items.Count, 2);
+        WaketimeAvg = decimal.Round(_items.Sum(s => s.WaketimeRec) / _items.Count, 2);
+    }
+
+    private void SetBedtimeModelInfo(ref Sleep sleep, TimeSpan timeSpan)
+    {
+        sleep.Bedtime = timeSpan;
+        sleep.BedtimeRec = DateTimeService.TimeSpanToDecimal(timeSpan);
+        sleep.BedtimeDisplay = DateTimeService.TimeSpanToDateTime(timeSpan);
+    }
+
+    private static void SetDuration(ref Sleep sleep, decimal bedtime, decimal waketime)
+    {
+        var duration = waketime - bedtime;
+        sleep.Duration = duration > 0
+                       ? duration
+                       : 24 + duration;
+    }
+
+    private void SetWaketimeModelInfo(ref Sleep sleep, TimeSpan timeSpan)
+    {
+        sleep.Waketime = timeSpan;
+        sleep.WaketimeRec = DateTimeService.TimeSpanToDecimal(timeSpan);
+        sleep.WaketimeDisplay = DateTimeService.TimeSpanToDateTime(timeSpan);
+    }
+
+    private async Task<DialogResult> ShowConfirmDeleteDialogAsync()
     {
         var parameters = new DialogParameters<ConfirmDelete>
         {
@@ -67,39 +156,6 @@ public partial class SleepTable
         };
 
         var confirmModal = DialogService.Show<ConfirmDelete>("Delete", parameters, options);
-        var result = await confirmModal.Result;
-        if (result.Canceled)
-        {
-            return;
-        }
-        var index = _items.IndexOf(item.Item);
-        _items.RemoveAt(index);
-        GetAverages();
-    }
-
-    private void CommittedItemChanges(Sleep sleep) =>
-        GetAverages();
-
-    private void StartedEditingItem(Sleep item) =>
-        _sleep = item;
-
-    private void GetAverages()
-    {
-        if (_items.Count == 0)
-        {
-            BedtimeAvg = 0;
-            WaketimeAvg = 0;
-            return;
-        }
-        BedtimeAvg = decimal.Round(_items.Sum(s => s.BedtimeRec) / _items.Count, 2);
-        WaketimeAvg = decimal.Round(_items.Sum(s => s.WaketimeRec) / _items.Count, 2);
-    }
-
-    private static decimal GetDuration(decimal bedtime, decimal waketime)
-    {
-        var duration = waketime - bedtime;
-        return duration > 0
-            ? duration
-            : 24 + duration;
+        return await confirmModal.Result;
     }
 }
