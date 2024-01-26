@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.VisualBasic.FileIO;
 
 using MudBlazor;
 
@@ -18,7 +17,7 @@ public partial class SleepTable
     [Inject] private IFileService FileService { get; set; } = default!;
     [Inject] private NotifyStateService NotifyService { get; set; } = default!;
 
-    private readonly ObservableCollection<Sleep> _items = [];
+    private ObservableCollection<Sleep> _items = [];
     private Sleep _sleep = new();
     private MudTimePicker _bedtimepicker = new();
     private MudTimePicker _waketimepicker = new();
@@ -46,13 +45,13 @@ public partial class SleepTable
         }
         if (timepicker == _bedtimepicker)
         {
-            SetBedtimeModelInfo(ref _sleep, (TimeSpan)newTime);
+            SetBedtimeModelInfo((TimeSpan)newTime);
         }
         else
         {
-            SetWaketimeModelInfo(ref _sleep, (TimeSpan)newTime);
+            SetWaketimeModelInfo((TimeSpan)newTime);
         }
-        SetDuration(ref _sleep, _sleep.BedtimeRec, _sleep.WaketimeRec);
+        _sleep.Duration = DateTimeService.GetDuration(_sleep.BedtimeRec, _sleep.WaketimeRec);
     }
 
     private async Task ImportFileData()
@@ -61,24 +60,7 @@ public partial class SleepTable
         if (selectedFile != null && selectedFile.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
         {
             ClearTable();
-            using (var parser = new TextFieldParser(selectedFile.FullPath))
-            {
-                parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
-                parser.SetDelimiters(",");
-                while (!parser.EndOfData)
-                {
-                    var sleep = new Sleep();
-                    var fields = parser.ReadFields();
-                    if (fields != null && fields.Length == 3)
-                    {
-                        sleep.Id = fields[0];
-                        SetBedtimeModelInfo(ref sleep, DateTimeService.StringToTimeSpan(fields[1]));
-                        SetWaketimeModelInfo(ref sleep, DateTimeService.StringToTimeSpan(fields[2]));
-                        SetDuration(ref sleep, sleep.BedtimeRec, sleep.WaketimeRec);
-                        _items.Add(sleep);
-                    }
-                }
-            }
+            _items = FileService.ParseImportFileData(selectedFile.FullPath);
             SetAveragesInView();
             await InvokeAsync(StateHasChanged);
         }
@@ -120,26 +102,18 @@ public partial class SleepTable
         WaketimeAvg = decimal.Round(_items.Sum(s => s.WaketimeRec) / _items.Count, 2);
     }
 
-    private void SetBedtimeModelInfo(ref Sleep sleep, TimeSpan timeSpan)
+    private void SetBedtimeModelInfo(TimeSpan timeSpan)
     {
-        sleep.Bedtime = timeSpan;
-        sleep.BedtimeRec = DateTimeService.TimeSpanToDecimal(timeSpan);
-        sleep.BedtimeDisplay = DateTimeService.TimeSpanToDateTime(timeSpan);
+        _sleep.Bedtime = timeSpan;
+        _sleep.BedtimeRec = DateTimeService.TimeSpanToDecimal(timeSpan);
+        _sleep.BedtimeDisplay = DateTimeService.TimeSpanToDateTime(timeSpan);
     }
 
-    private static void SetDuration(ref Sleep sleep, decimal bedtime, decimal waketime)
+    private void SetWaketimeModelInfo(TimeSpan timeSpan)
     {
-        var duration = waketime - bedtime;
-        sleep.Duration = duration > 0
-                       ? duration
-                       : 24 + duration;
-    }
-
-    private void SetWaketimeModelInfo(ref Sleep sleep, TimeSpan timeSpan)
-    {
-        sleep.Waketime = timeSpan;
-        sleep.WaketimeRec = DateTimeService.TimeSpanToDecimal(timeSpan);
-        sleep.WaketimeDisplay = DateTimeService.TimeSpanToDateTime(timeSpan);
+        _sleep.Waketime = timeSpan;
+        _sleep.WaketimeRec = DateTimeService.TimeSpanToDecimal(timeSpan);
+        _sleep.WaketimeDisplay = DateTimeService.TimeSpanToDateTime(timeSpan);
     }
 
     private async Task<DialogResult> ShowConfirmDeleteDialogAsync()
