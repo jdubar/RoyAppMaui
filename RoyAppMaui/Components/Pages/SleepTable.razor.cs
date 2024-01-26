@@ -9,6 +9,7 @@ using RoyAppMaui.Models;
 using RoyAppMaui.Services;
 
 using System.Collections.ObjectModel;
+using System.Text;
 
 namespace RoyAppMaui.Components.Pages;
 public partial class SleepTable
@@ -82,12 +83,33 @@ public partial class SleepTable
                 _ = Task.Run(ImportFileData);
                 break;
             case MenuItems.Export:
+                _ = Task.Run(SaveFileData);
                 break;
             case MenuItems.Clear:
                 ClearTable();
                 break;
         }
         InvokeAsync(StateHasChanged);
+    }
+
+    private async Task SaveFileData()
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal)");
+        foreach (var item in _items)
+        {
+            sb.AppendLine($"{item.Id},{item.BedtimeDisplay},{item.BedtimeRec},{item.WaketimeDisplay},{item.WaketimeRec}");
+        }
+        sb.AppendLine($"\r\nBedtime Average: {BedtimeAvg}");
+        sb.AppendLine($"Waketime Average: {WaketimeAvg}");
+        if (await FileService.SaveDataToFile(sb.ToString()))
+        {
+            // TODO: add toast success
+        }
+        else
+        {
+            // TODO: add toast fail
+        }
     }
 
     private void OnStartedEditingItem(Sleep item) =>
