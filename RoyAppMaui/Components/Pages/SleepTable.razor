@@ -2,16 +2,18 @@
 
 @using RoyAppMaui.Models
 
-<MudDataGrid T="Sleep" Height="calc(100vh - 220px)"
+<MudDataGrid T="Sleep"
+             Bordered="true"
+             Dense="true"
+             Elevation="25"
              FixedHeader="true"
              FixedFooter="true"
              EditMode="DataGridEditMode.Form"
              EditTrigger="DataGridEditTrigger.Manual"
+             Height="calc(100vh - 220px)"
              Items="_items"
-             Bordered="true"
-             Dense="true"
-             Elevation="25"
              ReadOnly="false"
+             RowsPerPage="25"
              StartedEditingItem="OnStartedEditingItem"
              CommittedItemChanges="OnCommittedItemChanges">
     <Columns>
@@ -24,34 +26,34 @@
         <PropertyColumn Property="x => x.BedtimeDisplay" Title="Bedtime">
             <EditTemplate>
                 <MudTimePicker @ref="_bedtimepicker"
-                               Label="Bedtime"
-                               Editable="true"
-                               Time="context.Item.Bedtime"
                                AmPm="true"
-                               Placeholder="hh:mm"
-                               TimeFormat="HH:mm"
+                               Editable="true"
                                ImmediateText="true"
-                               Variant="Variant.Text"
+                               Label="Bedtime"
                                PickerClosed="_bedtimepicker.ResetAsync"
                                PickerVariant="PickerVariant.Dialog"
-                               TimeChanged="args => HandleTimeChange(_bedtimepicker, args)" />
+                               Placeholder="hh:mm"
+                               Time="context.Item.Bedtime"
+                               TimeChanged="args => HandleTimeChange(_bedtimepicker, args)"
+                               TimeFormat="HH:mm"
+                               Variant="Variant.Text" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.BedtimeRec" Title="(As Decimal)" IsEditable="false" />
         <PropertyColumn Property="x => x.WaketimeDisplay" Title="Waketime">
             <EditTemplate>
                 <MudTimePicker @ref="_waketimepicker"
-                               Label="Waketime"
-                               Editable="true"
-                               Time="context.Item.Waketime"
                                AmPm="true"
-                               Placeholder="hh:mm"
-                               TimeFormat="HH:mm"
+                               Editable="true"
                                ImmediateText="true"
-                               Variant="Variant.Text"
+                               Label="Waketime"
                                PickerClosed="_waketimepicker.ResetAsync"
                                PickerVariant="PickerVariant.Dialog"
-                               TimeChanged="args => HandleTimeChange(_waketimepicker, args)" />
+                               Placeholder="hh:mm"
+                               Time="context.Item.Waketime"
+                               TimeChanged="args => HandleTimeChange(_waketimepicker, args)"
+                               TimeFormat="HH:mm"
+                               Variant="Variant.Text" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.WaketimeRec" Title="(As Decimal)" IsEditable="false" />
@@ -74,18 +76,22 @@
 </MudDataGrid>
 <div style="width: 50%;">
     <MudNumericField @bind-Value="BedtimeAvg"
+                     Class="d-inline-flex pa-3"
+                     HideSpinButtons="true"
                      Label="Bedtime Avg"
-                     Variant="Variant.Outlined"
+                     Min="0"
                      ReadOnly="true"
-                     HideSpinButtons="true"
-                     Min="0" Class="d-inline-flex pa-3" />
+                     Variant="Variant.Outlined" />
     <MudNumericField @bind-Value="WaketimeAvg"
-                     Label="Waketime Avg"
-                     Variant="Variant.Outlined"
-                     ReadOnly="true"
+                     Class="d-inline-flex pa-3"
                      HideSpinButtons="true"
-                     Min="0" Class="d-inline-flex pa-3" />
+                     Label="Waketime Avg"
+                     Min="0"
+                     ReadOnly="true"
+                     Variant="Variant.Outlined" />
 </div>
 <MudItem Style="position:fixed; bottom:15px;right:0" Class="d-flex justify-end flex-grow-1 gap-4 mr-5">
-    <MudFab Color="Color.Success" StartIcon="@Icons.Material.Filled.Add" OnClick="AddNewItem" />
+    <MudFab Color="Color.Success"
+            OnClick="AddNewItem"
+            StartIcon="@Icons.Material.Filled.Add" />
 </MudItem>

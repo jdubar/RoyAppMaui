@@ -3,6 +3,7 @@
 using MudBlazor;
 
 using RoyAppMaui.Components.Modals;
+using RoyAppMaui.Enums;
 using RoyAppMaui.Interfaces;
 using RoyAppMaui.Models;
 using RoyAppMaui.Services;
@@ -27,15 +28,19 @@ public partial class SleepTable
 
     protected override void OnInitialized()
     {
-        NotifyService.EventClick += OnFileImportClick;
+        NotifyService.EventClick += OnMenuItemClick;
         base.OnInitialized();
     }
 
     private void AddNewItem() =>
         _items.Add(new Sleep());
 
-    private void ClearTable() =>
+    private void ClearTable()
+    {
         _items.Clear();
+        BedtimeAvg = 0;
+        WaketimeAvg = 0;
+    }
 
     private void HandleTimeChange(MudTimePicker timepicker, TimeSpan? newTime)
     {
@@ -69,9 +74,19 @@ public partial class SleepTable
     private void OnCommittedItemChanges(Sleep sleep) =>
         SetAveragesInView();
 
-    private void OnFileImportClick(object? sender, EventArgs e)
+    private void OnMenuItemClick(object? sender, EventArgs e)
     {
-        _ = Task.Run(ImportFileData);
+        switch (((MenuItemClickEventArgs)e).MenuItem)
+        {
+            case MenuItems.Import:
+                _ = Task.Run(ImportFileData);
+                break;
+            case MenuItems.Export:
+                break;
+            case MenuItems.Clear:
+                ClearTable();
+                break;
+        }
         InvokeAsync(StateHasChanged);
     }
 
