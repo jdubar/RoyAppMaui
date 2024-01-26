@@ -1,12 +1,15 @@
-﻿using Microsoft.VisualBasic.FileIO;
+﻿using CommunityToolkit.Maui.Storage;
+
+using Microsoft.VisualBasic.FileIO;
 
 using RoyAppMaui.Interfaces;
 using RoyAppMaui.Models;
 
 using System.Collections.ObjectModel;
+using System.Text;
 
 namespace RoyAppMaui.Services;
-public class FileService(IDateTimeService dateTimeService) : IFileService
+public class FileService(IDateTimeService dateTimeService, IFileSaver fileSaver) : IFileService
 {
     private static readonly string[] _ios = ["public.comma-separated-values-text"];
     private static readonly string[] _android = ["text/comma-separated-values"];
@@ -42,6 +45,13 @@ public class FileService(IDateTimeService dateTimeService) : IFileService
             }
         }
         return items;
+    }
+
+    public async Task<bool> SaveDataToFile(string data)
+    {
+        using var stream = new MemoryStream(Encoding.Default.GetBytes(data));
+        var result = await fileSaver.SaveAsync($"RoyApp_{DateTime.Now:yyyy-MM-dd}_{DateTime.Now:hh:mm:ss}.csv", stream);
+        return result.IsSuccessful;
     }
 
     public async Task<FileResult?> SelectImportFile()
