@@ -3,6 +3,7 @@ using CommunityToolkit.Maui.Storage;
 
 using Microsoft.Extensions.Logging;
 
+using MudBlazor;
 using MudBlazor.Services;
 
 using RoyAppMaui.Interfaces;
@@ -23,7 +24,11 @@ public static class MauiProgram
             });
 
         builder.Services.AddMauiBlazorWebView();
-        builder.Services.AddMudServices();
+        builder.Services.AddMudServices(config =>
+        {
+            config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
+            config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+        });
         builder.Services.AddSingleton(FileSaver.Default);
 
         builder.Services.AddSingleton<IDateTimeService, DateTimeService>();

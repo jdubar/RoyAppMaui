@@ -17,6 +17,7 @@ public partial class SleepTable
     [Inject] private IDateTimeService DateTimeService { get; set; } = default!;
     [Inject] private IDialogService DialogService { get; set; } = default!;
     [Inject] private IFileService FileService { get; set; } = default!;
+    [Inject] private ISnackbar Snackbar { get; set; } = default!;
     [Inject] private NotifyStateService NotifyService { get; set; } = default!;
 
     private ObservableCollection<Sleep> _items = [];
@@ -67,8 +68,22 @@ public partial class SleepTable
         {
             ClearTable();
             _items = FileService.ParseImportFileData(selectedFile.FullPath);
-            SetAveragesInView();
-            await InvokeAsync(StateHasChanged);
+            if (_items is not null)
+            {
+                if (_items.Count > 0)
+                {
+                    SetAveragesInView();
+                    await InvokeAsync(StateHasChanged);
+                }
+                else
+                {
+                    Snackbar.Add("No items were imported", Severity.Info);
+                }
+            }
+            else
+            {
+                Snackbar.Add("Error - items came back as null", Severity.Error);
+            }
         }
     }
 
@@ -104,11 +119,11 @@ public partial class SleepTable
         sb.AppendLine($"Waketime Average: {WaketimeAvg}");
         if (await FileService.SaveDataToFile(sb.ToString()))
         {
-            // TODO: add toast success
+            Snackbar.Add("Successfully saved the file", Severity.Success);
         }
         else
         {
-            // TODO: add toast fail
+            Snackbar.Add("Error saving the file!", Severity.Error);
         }
     }
 
