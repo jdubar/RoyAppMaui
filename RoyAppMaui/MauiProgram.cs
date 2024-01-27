@@ -27,7 +27,7 @@ public static class MauiProgram
         builder.Services.AddMudServices(config =>
         {
             config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
-            config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+            config.SnackbarConfiguration.ClearAfterNavigation = true;
         });
         builder.Services.AddSingleton(FileSaver.Default);
 

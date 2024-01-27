@@ -25,6 +25,8 @@ public partial class SleepTable
     private MudTimePicker _bedtimepicker = new();
     private MudTimePicker _waketimepicker = new();
 
+    private bool _isLoading;
+
     private decimal BedtimeAvg {  get; set; }
     private decimal WaketimeAvg {  get; set; }
 
@@ -66,6 +68,7 @@ public partial class SleepTable
         var selectedFile = await FileService.SelectImportFile();
         if (selectedFile != null && selectedFile.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
         {
+            _isLoading = true;
             ClearTable();
             _items = FileService.ParseImportFileData(selectedFile.FullPath);
             if (_items is not null)
@@ -73,17 +76,19 @@ public partial class SleepTable
                 if (_items.Count > 0)
                 {
                     SetAveragesInView();
+                    _isLoading = false;
                     await InvokeAsync(StateHasChanged);
                 }
                 else
                 {
-                    Snackbar.Add("No items were imported", Severity.Info);
+                    Snackbar.Add("No items were imported, check the import file", Severity.Info);
                 }
             }
             else
             {
-                Snackbar.Add("Error - items came back as null", Severity.Error);
+                Snackbar.Add("Error! The items list was null", Severity.Error);
             }
+            _isLoading = false;
         }
     }
 
@@ -109,6 +114,11 @@ public partial class SleepTable
 
     private async Task SaveFileData()
     {
+        if (_items.Count == 0)
+        {
+            Snackbar.Add("There are no items to save", Severity.Info);
+            return;
+        }
         var sb = new StringBuilder();
         sb.AppendLine("Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal)");
         foreach (var item in _items)

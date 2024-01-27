@@ -12,6 +12,8 @@
              EditTrigger="DataGridEditTrigger.Manual"
              Height="calc(100vh - 220px)"
              Items="_items"
+             Loading="@_isLoading"
+             LoadingProgressColor="@Color.Primary"
              ReadOnly="false"
              RowsPerPage="25"
              StartedEditingItem="OnStartedEditingItem"
