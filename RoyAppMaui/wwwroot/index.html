@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>RoyAppMaui</title>
     <base href="/" />
-    <!--<link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />-->
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="stylesheet" href="RoyAppMaui.styles.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
@@ -17,7 +17,14 @@
 
     <div class="status-bar-safe-area"></div>
 
-    <div id="app">Loading...</div>
+    <div id="app">
+        <div style="position:absolute; top:30vh; width:100%; text-align:center">
+            <div style="display:flex; gap:10px; justify-content:center; align-items:center">
+                <div class="spinner-border" role="status"></div>
+                Loading...
+            </div>
+        </div>
+    </div>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
