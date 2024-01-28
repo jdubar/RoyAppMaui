@@ -17,9 +17,9 @@ public partial class SleepTable
     [Inject] private IDateTimeService DateTimeService { get; set; } = default!;
     [Inject] private IDialogService DialogService { get; set; } = default!;
     [Inject] private IFileService FileService { get; set; } = default!;
-    [Inject] private ISnackbar Snackbar { get; set; } = default!;
     [Inject] private ISettingsService Settings { get; set; } = default!;
-    [Inject] private NotifyStateService NotifyService { get; set; } = default!;
+    [Inject] private ISnackbar Snackbar { get; set; } = default!;
+    [Inject] private NotifyService NotifyService { get; set; } = default!;
 
     private ObservableCollection<Sleep> _items = [];
     private Sleep _sleep = new();
@@ -114,7 +114,7 @@ public partial class SleepTable
     }
 
     private void OnRowsPerPageChanged(int pageSize) =>
-    Settings.RowsPerPage = pageSize;
+        Settings.RowsPerPage = pageSize;
 
     private void OnStartedEditingItem(Sleep item) =>
         _sleep = item;

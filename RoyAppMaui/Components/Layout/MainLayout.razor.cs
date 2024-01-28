@@ -10,7 +10,7 @@ namespace RoyAppMaui.Components.Layout;
 public partial class MainLayout
 {
     [Inject] private ISettingsService Settings { get; set; } = default!;
-    [Inject] private NotifyStateService NotifyService { get; set; } = default!;
+    [Inject] private NotifyService NotifyService { get; set; } = default!;
 
     private MudThemeProvider _mudThemeProvider = default!;
 

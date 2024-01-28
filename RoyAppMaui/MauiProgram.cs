@@ -34,7 +34,7 @@ public static class MauiProgram
 
         builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
         builder.Services.AddSingleton<IFileService, FileService>();
-        builder.Services.AddScoped<NotifyStateService>();
+        builder.Services.AddScoped<NotifyService>();
 
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();

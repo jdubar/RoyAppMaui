@@ -1,7 +1,7 @@
 ﻿using RoyAppMaui.Enums;
 
 namespace RoyAppMaui.Services;
-public class NotifyStateService
+public class NotifyService
 {
     public event EventHandler? EventClick;
 
