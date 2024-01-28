@@ -5,6 +5,7 @@ using System.Globalization;
 namespace RoyAppMaui.Services;
 public class DateTimeService : IDateTimeService
 {
+    private readonly CultureInfo _invariant = CultureInfo.InvariantCulture;
     public decimal GetDuration(decimal bedtime, decimal waketime)
     {
         var duration = waketime - bedtime;
@@ -16,7 +17,7 @@ public class DateTimeService : IDateTimeService
     public TimeSpan StringToTimeSpan(string time)
     {
         string[] formats = ["hhmm", "hmm", @"hh\:mm", @"h\:mm\:ss", @"h:mm", @"h:mm tt"];
-        var dateTime = DateTime.ParseExact(time, formats, CultureInfo.InvariantCulture);
+        var dateTime = DateTime.ParseExact(time, formats, _invariant);
         return dateTime.TimeOfDay;
     }
 
@@ -24,5 +25,5 @@ public class DateTimeService : IDateTimeService
         DateTime.Today.Add(newTime).ToString("hh:mm tt");
 
     public decimal TimeSpanToDecimal(TimeSpan? newTime) =>
-        decimal.Round(Convert.ToDecimal(TimeSpan.Parse(newTime.ToString() ?? "0:0", CultureInfo.InvariantCulture).TotalHours), 2);
+        decimal.Round(Convert.ToDecimal(TimeSpan.Parse(newTime.ToString() ?? "0:0", _invariant).TotalHours), 2);
 }
