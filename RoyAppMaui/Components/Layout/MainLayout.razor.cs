@@ -3,21 +3,22 @@
 using MudBlazor;
 
 using RoyAppMaui.Enums;
+using RoyAppMaui.Interfaces;
 using RoyAppMaui.Services;
 
 namespace RoyAppMaui.Components.Layout;
 public partial class MainLayout
 {
+    [Inject] private ISettingsService Settings { get; set; } = default!;
     [Inject] private NotifyStateService NotifyService { get; set; } = default!;
 
-    private bool _isDarkMode;
     private MudThemeProvider _mudThemeProvider = default!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+            Settings.IsDarkMode = await _mudThemeProvider.GetSystemPreference();
             await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
             StateHasChanged();
         }
@@ -34,7 +35,7 @@ public partial class MainLayout
 
     private Task OnSystemPreferenceChanged(bool newValue)
     {
-        _isDarkMode = newValue;
+        Settings.IsDarkMode = newValue;
         StateHasChanged();
         return Task.CompletedTask;
     }

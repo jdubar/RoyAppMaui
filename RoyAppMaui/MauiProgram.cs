@@ -30,6 +30,7 @@ public static class MauiProgram
             config.SnackbarConfiguration.ClearAfterNavigation = true;
         });
         builder.Services.AddSingleton(FileSaver.Default);
+        builder.Services.AddSingleton<ISettingsService>(new SettingsService(Preferences.Default));
 
         builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
         builder.Services.AddSingleton<IFileService, FileService>();

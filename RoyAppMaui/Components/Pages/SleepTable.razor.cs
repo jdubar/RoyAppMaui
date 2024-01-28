@@ -18,6 +18,7 @@ public partial class SleepTable
     [Inject] private IDialogService DialogService { get; set; } = default!;
     [Inject] private IFileService FileService { get; set; } = default!;
     [Inject] private ISnackbar Snackbar { get; set; } = default!;
+    [Inject] private ISettingsService Settings { get; set; } = default!;
     [Inject] private NotifyStateService NotifyService { get; set; } = default!;
 
     private ObservableCollection<Sleep> _items = [];
@@ -136,6 +137,9 @@ public partial class SleepTable
             Snackbar.Add("Error saving the file!", Severity.Error);
         }
     }
+
+    private void OnRowsPerPageChanged(int pageSize) =>
+        Settings.RowsPerPage = pageSize;
 
     private void OnStartedEditingItem(Sleep item) =>
         _sleep = item;

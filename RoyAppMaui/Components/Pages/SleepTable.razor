@@ -15,7 +15,8 @@
              Loading="@_isLoading"
              LoadingProgressColor="@Color.Primary"
              ReadOnly="false"
-             RowsPerPage="25"
+             RowsPerPage="Settings.RowsPerPage"
+             RowsPerPageChanged="OnRowsPerPageChanged"
              StartedEditingItem="OnStartedEditingItem"
              CommittedItemChanges="OnCommittedItemChanges">
     <Columns>
