@@ -120,15 +120,7 @@ public partial class SleepTable
             Snackbar.Add("There are no items to save", Severity.Info);
             return;
         }
-        var sb = new StringBuilder();
-        sb.AppendLine("Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal)");
-        foreach (var item in _items)
-        {
-            sb.AppendLine($"{item.Id},{item.BedtimeDisplay},{item.BedtimeRec},{item.WaketimeDisplay},{item.WaketimeRec}");
-        }
-        sb.AppendLine($"\r\nBedtime Average: {BedtimeAvg}");
-        sb.AppendLine($"Waketime Average: {WaketimeAvg}");
-        if (await FileService.SaveDataToFile(sb.ToString()))
+        if (await FileService.SaveDataToFile(GetListDataAsString()))
         {
             Snackbar.Add("Successfully saved the file", Severity.Success);
         }
@@ -136,6 +128,19 @@ public partial class SleepTable
         {
             Snackbar.Add("Error saving the file!", Severity.Error);
         }
+    }
+
+    private string GetListDataAsString()
+    {
+        var sb = new StringBuilder();
+        _ = sb.AppendLine("Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal)");
+        foreach (var item in _items)
+        {
+            _ = sb.AppendLine($"{item.Id},{item.BedtimeDisplay},{item.BedtimeRec},{item.WaketimeDisplay},{item.WaketimeRec}");
+        }
+        _ = sb.AppendLine($"\r\nBedtime Average: {BedtimeAvg}");
+        _ = sb.AppendLine($"Waketime Average: {WaketimeAvg}");
+        return sb.ToString();
     }
 
     private void OnRowsPerPageChanged(int pageSize) =>
