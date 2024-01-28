@@ -64,7 +64,7 @@ public partial class SleepTable
         _sleep.Duration = DateTimeService.GetDuration(_sleep.BedtimeRec, _sleep.WaketimeRec);
     }
 
-    private async Task ImportFileData()
+    private async Task ImportFileDataAsync()
     {
         var selectedFile = await FileService.SelectImportFile();
         if (selectedFile != null && selectedFile.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
@@ -101,10 +101,10 @@ public partial class SleepTable
         switch (((MenuItemClickEventArgs)e).MenuItem)
         {
             case MenuItems.Import:
-                _ = Task.Run(ImportFileData);
+                _ = Task.Run(ImportFileDataAsync);
                 break;
             case MenuItems.Export:
-                _ = Task.Run(SaveFileData);
+                _ = Task.Run(SaveFileDataAsync);
                 break;
             case MenuItems.Clear:
                 ClearTable();
@@ -113,7 +113,13 @@ public partial class SleepTable
         InvokeAsync(StateHasChanged);
     }
 
-    private async Task SaveFileData()
+    private void OnRowsPerPageChanged(int pageSize) =>
+    Settings.RowsPerPage = pageSize;
+
+    private void OnStartedEditingItem(Sleep item) =>
+        _sleep = item;
+
+    private async Task SaveFileDataAsync()
     {
         if (_items.Count == 0)
         {
@@ -142,12 +148,6 @@ public partial class SleepTable
         _ = sb.AppendLine($"Waketime Average: {WaketimeAvg}");
         return sb.ToString();
     }
-
-    private void OnRowsPerPageChanged(int pageSize) =>
-        Settings.RowsPerPage = pageSize;
-
-    private void OnStartedEditingItem(Sleep item) =>
-        _sleep = item;
 
     private async Task RemoveItemAsync(Sleep item)
     {
