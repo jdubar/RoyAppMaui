@@ -32,6 +32,7 @@ public static class MauiProgram
         builder.Services.AddSingleton(FileSaver.Default);
         builder.Services.AddSingleton<ISettingsService>(new SettingsService(Preferences.Default));
 
+        builder.Services.AddSingleton<IDataService, DataService>();
         builder.Services.AddSingleton<IDateTimeService, DateTimeService>();
         builder.Services.AddSingleton<IFileService, FileService>();
         builder.Services.AddScoped<NotifyService>();

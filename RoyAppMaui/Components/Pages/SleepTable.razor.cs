@@ -9,11 +9,11 @@ using RoyAppMaui.Models;
 using RoyAppMaui.Services;
 
 using System.Collections.ObjectModel;
-using System.Text;
 
 namespace RoyAppMaui.Components.Pages;
 public partial class SleepTable
 {
+    [Inject] private IDataService DataService { get; set; } = default!;
     [Inject] private IDateTimeService DateTimeService { get; set; } = default!;
     [Inject] private IDialogService DialogService { get; set; } = default!;
     [Inject] private IFileService FileService { get; set; } = default!;
@@ -128,7 +128,7 @@ public partial class SleepTable
             Snackbar.Add("There are no items to save", Severity.Info);
             return;
         }
-        if (await FileService.SaveDataToFile(GetListDataAsString()))
+        if (await FileService.SaveDataToFile(DataService.GetListDataAsString(_items)))
         {
             Snackbar.Add("Successfully saved the file", Severity.Success);
         }
@@ -136,19 +136,6 @@ public partial class SleepTable
         {
             Snackbar.Add("Error saving the file!", Severity.Error);
         }
-    }
-
-    private string GetListDataAsString()
-    {
-        var sb = new StringBuilder();
-        _ = sb.AppendLine("Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal)");
-        foreach (var item in _items)
-        {
-            _ = sb.AppendLine($"{item.Id},{item.BedtimeDisplay},{item.BedtimeRec},{item.WaketimeDisplay},{item.WaketimeRec}");
-        }
-        _ = sb.AppendLine($"\r\nBedtime Average: {BedtimeAvg}");
-        _ = sb.AppendLine($"Waketime Average: {WaketimeAvg}");
-        return sb.ToString();
     }
 
     private async Task RemoveItemAsync(Sleep item)
