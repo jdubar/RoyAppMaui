@@ -158,8 +158,8 @@ public partial class SleepTable
             WaketimeAvg = 0;
             return;
         }
-        BedtimeAvg = DataService.GetAverageOfBedtime(_items);
-        WaketimeAvg = DataService.GetAverageOfWaketime(_items);
+        BedtimeAvg = DataService.GetAverageOfBedtimes(_items);
+        WaketimeAvg = DataService.GetAverageOfWaketimes(_items);
     }
 
     private void SetBedtimeModelInfo(TimeSpan timeSpan)
