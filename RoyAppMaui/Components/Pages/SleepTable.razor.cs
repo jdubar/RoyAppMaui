@@ -23,8 +23,6 @@ public partial class SleepTable
 
     private ObservableCollection<Sleep> _items = [];
     private Sleep _sleep = new();
-    private MudTimePicker _bedtimepicker = new();
-    private MudTimePicker _waketimepicker = new();
 
     private bool _isLoading;
 
@@ -47,19 +45,23 @@ public partial class SleepTable
         WaketimeAvg = 0;
     }
 
-    private void HandleTimeChange(MudTimePicker timepicker, TimeSpan? newTime)
+    private void HandleTimeChange(TimePickers timepicker, TimeSpan? newTime)
     {
-        if (newTime == null || timepicker == null)
+        if (newTime == null)
         {
             return;
         }
-        if (timepicker == _bedtimepicker)
+
+        switch (timepicker)
         {
-            SetBedtimeModelInfo((TimeSpan)newTime);
-        }
-        else
-        {
-            SetWaketimeModelInfo((TimeSpan)newTime);
+            case TimePickers.Bedtime:
+                SetBedtimeModelInfo((TimeSpan)newTime);
+                break;
+            case TimePickers.Waketime:
+                SetWaketimeModelInfo((TimeSpan)newTime);
+                break;
+            default:
+                return;
         }
         _sleep.Duration = DateTimeService.GetDuration(_sleep.BedtimeRec, _sleep.WaketimeRec);
     }
