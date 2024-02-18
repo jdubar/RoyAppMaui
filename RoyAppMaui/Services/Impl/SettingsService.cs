@@ -1,6 +1,4 @@
-﻿using RoyAppMaui.Interfaces;
-
-namespace RoyAppMaui.Services;
+﻿namespace RoyAppMaui.Services.Impl;
 internal class SettingsService(IPreferences settings) : ISettingsService
 {
     private readonly IPreferences Settings = settings;

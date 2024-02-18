@@ -1,10 +1,8 @@
-﻿using RoyAppMaui.Interfaces;
-using RoyAppMaui.Models;
-
+﻿using RoyAppMaui.Models;
 using System.Collections.ObjectModel;
 using System.Text;
 
-namespace RoyAppMaui.Services;
+namespace RoyAppMaui.Services.Impl;
 public class DataService : IDataService
 {
     public decimal GetAverageOfBedtimes(ObservableCollection<Sleep> sleeps) =>

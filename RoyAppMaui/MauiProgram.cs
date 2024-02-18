@@ -5,9 +5,8 @@ using Microsoft.Extensions.Logging;
 
 using MudBlazor;
 using MudBlazor.Services;
-
-using RoyAppMaui.Interfaces;
 using RoyAppMaui.Services;
+using RoyAppMaui.Services.Impl;
 
 namespace RoyAppMaui;
 public static class MauiProgram

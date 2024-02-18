@@ -1,15 +1,12 @@
 ﻿using CommunityToolkit.Maui.Storage;
 
 using Microsoft.VisualBasic.FileIO;
-
-using RoyAppMaui.Interfaces;
 using RoyAppMaui.Models;
-
 using System.Collections.ObjectModel;
 using System.Text;
 
-namespace RoyAppMaui.Services;
-public class FileService(IDateTimeService dateTimeService, IFileSaver fileSaver) : IFileService
+namespace RoyAppMaui.Services.Impl;
+public class FileService(IDataService dataService, IDateTimeService dateTimeService, IFileSaver fileSaver) : IFileService
 {
     private static readonly string[] _ios = ["public.comma-separated-values-text"];
     private static readonly string[] _android = ["text/comma-separated-values"];
@@ -39,7 +36,7 @@ public class FileService(IDateTimeService dateTimeService, IFileSaver fileSaver)
                 sleep.WaketimeRec = dateTimeService.TimeSpanToDecimal(sleep.Waketime);
                 sleep.WaketimeDisplay = dateTimeService.TimeSpanToDateTime((TimeSpan)sleep.Waketime);
 
-                sleep.Duration = dateTimeService.GetDuration(sleep.BedtimeRec, sleep.WaketimeRec);
+                sleep.Duration = dataService.GetDuration(sleep.BedtimeRec, sleep.WaketimeRec);
 
                 items.Add(sleep);
             }

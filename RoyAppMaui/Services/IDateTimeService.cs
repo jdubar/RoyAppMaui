@@ -1,4 +1,4 @@
-﻿namespace RoyAppMaui.Interfaces;
+﻿namespace RoyAppMaui.Services;
 public interface IDateTimeService
 {
     TimeSpan StringToTimeSpan(string time);

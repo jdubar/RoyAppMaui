@@ -1,8 +1,7 @@
 ﻿using RoyAppMaui.Models;
-
 using System.Collections.ObjectModel;
 
-namespace RoyAppMaui.Interfaces;
+namespace RoyAppMaui.Services;
 public interface IFileService
 {
     ObservableCollection<Sleep> ParseImportFileData(string selectedFile);

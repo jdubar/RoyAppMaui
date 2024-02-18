@@ -1,8 +1,6 @@
-﻿using RoyAppMaui.Interfaces;
+﻿using System.Globalization;
 
-using System.Globalization;
-
-namespace RoyAppMaui.Services;
+namespace RoyAppMaui.Services.Impl;
 public class DateTimeService : IDateTimeService
 {
     private readonly CultureInfo _invariant = CultureInfo.InvariantCulture;
