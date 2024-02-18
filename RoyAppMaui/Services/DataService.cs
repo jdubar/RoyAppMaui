@@ -13,6 +13,14 @@ public class DataService : IDataService
     public decimal GetAverageOfWaketimes(ObservableCollection<Sleep> sleeps) =>
         decimal.Round(sleeps.Sum(s => s.WaketimeRec) / sleeps.Count, 2);
 
+    public decimal GetDuration(decimal bedtime, decimal waketime)
+    {
+        var duration = waketime - bedtime;
+        return duration > 0
+                        ? duration
+                        : 24 + duration;
+    }
+
     public string GetExportData(ObservableCollection<Sleep> sleeps)
     {
         var sb = new StringBuilder();

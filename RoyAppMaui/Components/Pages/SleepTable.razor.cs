@@ -63,7 +63,7 @@ public partial class SleepTable
             default:
                 return;
         }
-        _sleep.Duration = DateTimeService.GetDuration(_sleep.BedtimeRec, _sleep.WaketimeRec);
+        _sleep.Duration = DataService.GetDuration(_sleep.BedtimeRec, _sleep.WaketimeRec);
     }
 
     private async Task ImportFileDataAsync()

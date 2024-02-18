@@ -6,13 +6,6 @@ namespace RoyAppMaui.Services;
 public class DateTimeService : IDateTimeService
 {
     private readonly CultureInfo _invariant = CultureInfo.InvariantCulture;
-    public decimal GetDuration(decimal bedtime, decimal waketime)
-    {
-        var duration = waketime - bedtime;
-        return duration > 0
-                        ? duration
-                        : 24 + duration;
-    }
 
     public TimeSpan StringToTimeSpan(string time)
     {
