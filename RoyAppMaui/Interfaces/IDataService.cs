@@ -5,5 +5,7 @@ using System.Collections.ObjectModel;
 namespace RoyAppMaui.Interfaces;
 public interface IDataService
 {
-    string GetListDataAsString(ObservableCollection<Sleep> sleeps);
+    decimal GetAverageOfBedtime(ObservableCollection<Sleep> sleeps);
+    decimal GetAverageOfWaketime(ObservableCollection<Sleep> sleeps);
+    string GetExportData(ObservableCollection<Sleep> sleeps);
 }

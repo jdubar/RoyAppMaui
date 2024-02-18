@@ -7,7 +7,13 @@ using System.Text;
 namespace RoyAppMaui.Services;
 public class DataService : IDataService
 {
-    public string GetListDataAsString(ObservableCollection<Sleep> sleeps)
+    public decimal GetAverageOfBedtime(ObservableCollection<Sleep> sleeps) =>
+        decimal.Round(sleeps.Sum(s => s.BedtimeRec) / sleeps.Count, 2);
+
+    public decimal GetAverageOfWaketime(ObservableCollection<Sleep> sleeps) =>
+        decimal.Round(sleeps.Sum(s => s.WaketimeRec) / sleeps.Count, 2);
+
+    public string GetExportData(ObservableCollection<Sleep> sleeps)
     {
         var sb = new StringBuilder();
         _ = sb.AppendLine("Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal)");
@@ -15,8 +21,8 @@ public class DataService : IDataService
         {
             _ = sb.AppendLine($"{sleep.Id},{sleep.BedtimeDisplay},{sleep.BedtimeRec},{sleep.WaketimeDisplay},{sleep.WaketimeRec}");
         }
-        _ = sb.AppendLine($"\r\nBedtime Average: {decimal.Round(sleeps.Sum(s => s.BedtimeRec) / sleeps.Count, 2)}");
-        _ = sb.AppendLine($"Waketime Average: {decimal.Round(sleeps.Sum(s => s.WaketimeRec) / sleeps.Count, 2)}");
+        _ = sb.AppendLine($"\r\nBedtime Average: {GetAverageOfBedtime(sleeps)}");
+        _ = sb.AppendLine($"Waketime Average: {GetAverageOfWaketime(sleeps)}");
         return sb.ToString();
     }
 }

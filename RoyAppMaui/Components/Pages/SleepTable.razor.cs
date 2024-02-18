@@ -128,7 +128,7 @@ public partial class SleepTable
             Snackbar.Add("There are no items to save", Severity.Info);
             return;
         }
-        if (await FileService.SaveDataToFile(DataService.GetListDataAsString(_items)))
+        if (await FileService.SaveDataToFile(DataService.GetExportData(_items)))
         {
             Snackbar.Add("Successfully saved the file", Severity.Success);
         }
@@ -158,8 +158,8 @@ public partial class SleepTable
             WaketimeAvg = 0;
             return;
         }
-        BedtimeAvg = decimal.Round(_items.Sum(s => s.BedtimeRec) / _items.Count, 2);
-        WaketimeAvg = decimal.Round(_items.Sum(s => s.WaketimeRec) / _items.Count, 2);
+        BedtimeAvg = DataService.GetAverageOfBedtime(_items);
+        WaketimeAvg = DataService.GetAverageOfWaketime(_items);
     }
 
     private void SetBedtimeModelInfo(TimeSpan timeSpan)
