@@ -13,11 +13,17 @@ public partial class MainLayout
 
     private MudThemeProvider _mudThemeProvider = default!;
 
+    private string ThemeIcon => Settings.IsDarkMode
+                             ? Icons.Material.Outlined.DarkMode
+                             : Icons.Material.Outlined.LightMode;
+    private MudBlazor.Color ThemeIconColor => Settings.IsDarkMode
+                                           ? MudBlazor.Color.Inherit
+                                           : MudBlazor.Color.Warning;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            Settings.IsDarkMode = await _mudThemeProvider.GetSystemPreference();
             await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
             StateHasChanged();
         }
@@ -38,4 +44,7 @@ public partial class MainLayout
         StateHasChanged();
         return Task.CompletedTask;
     }
+
+    private void ThemeToggle() =>
+        Settings.IsDarkMode = !Settings.IsDarkMode;
 }

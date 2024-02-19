@@ -12,6 +12,11 @@
         </MudAvatar>
         <MudText Class="ml-3" Typo="Typo.h5">RoyApp</MudText>
         <MudSpacer />
+        <MudTooltip Text="Toggle the theme">
+            <MudIconButton Color="@ThemeIconColor"
+                           Icon="@ThemeIcon"
+                           OnClick="ThemeToggle" />
+        </MudTooltip>
         <MudMenu AnchorOrigin="Origin.BottomRight"
                  Color="Color.Inherit"
                  Icon="@Icons.Material.Filled.MoreVert"
