@@ -35,7 +35,7 @@
                                TimeChanged="args => HandleTimeChange(TimePickers.Bedtime, args)" />
             </EditTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.BedtimeRec" Title="(As Decimal)" IsEditable="false" />
+        <PropertyColumn Property="x => x.BedtimeRec" IsEditable="false" Title="(As Decimal)" />
         <PropertyColumn Property="x => x.WaketimeDisplay" Title="Waketime">
             <EditTemplate>
                 <TimeSelection Label="Waketime"
@@ -43,7 +43,7 @@
                                TimeChanged="args => HandleTimeChange(TimePickers.Waketime, args)" />
             </EditTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.WaketimeRec" Title="(As Decimal)" IsEditable="false" />
+        <PropertyColumn Property="x => x.WaketimeRec" IsEditable="false" Title="(As Decimal)" />
         <PropertyColumn Property="x => x.Duration" IsEditable="false" />
         <TemplateColumn Filterable="false" Sortable="false">
             <CellTemplate>
@@ -62,20 +62,8 @@
     </PagerContent>
 </MudDataGrid>
 <div style="width: 50%;">
-    <MudNumericField @bind-Value="BedtimeAvg"
-                     Class="d-inline-flex pa-3"
-                     HideSpinButtons="true"
-                     Label="Bedtime Avg"
-                     Min="0"
-                     ReadOnly="true"
-                     Variant="Variant.Outlined" />
-    <MudNumericField @bind-Value="WaketimeAvg"
-                     Class="d-inline-flex pa-3"
-                     HideSpinButtons="true"
-                     Label="Waketime Avg"
-                     Min="0"
-                     ReadOnly="true"
-                     Variant="Variant.Outlined" />
+    <AverageField Label="Bedtime Avg" Value="@BedtimeAvg"/>
+    <AverageField Label="Waketime Avg" Value="@WaketimeAvg" />
 </div>
 <MudItem Class="d-flex justify-end flex-grow-1 gap-4 mr-5"
          Style="position:fixed; bottom:15px;right:0">
