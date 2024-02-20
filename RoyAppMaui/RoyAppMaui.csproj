@@ -22,10 +22,10 @@
         <Nullable>enable</Nullable>
 
         <!-- Display name -->
-        <ApplicationTitle>RoyAppMaui</ApplicationTitle>
+        <ApplicationTitle>RoyApp</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>com.companyname.royappmaui</ApplicationId>
+        <ApplicationId>com.toethumb.royappmaui</ApplicationId>
 
         <!-- Versions -->
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>

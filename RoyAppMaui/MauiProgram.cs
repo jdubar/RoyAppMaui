@@ -2,6 +2,7 @@
 using CommunityToolkit.Maui.Storage;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.LifecycleEvents;
 
 using MudBlazor;
 using MudBlazor.Services;
@@ -20,7 +21,19 @@ public static class MauiProgram
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+            })
+#if WINDOWS
+            .ConfigureLifecycleEvents(lifecycle =>
+            {
+                lifecycle.AddWindows((builder) =>
+                {
+                    builder.OnWindowCreated(window =>
+                    {
+                        window.Title = AppInfo.Current.Name;
+                    });
+                });
             });
+#endif
 
         builder.Services.AddMauiBlazorWebView();
         builder.Services.AddMudServices(config =>
@@ -40,6 +53,7 @@ public static class MauiProgram
         builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
 #endif
+
 
         return builder.Build();
     }
