@@ -6,7 +6,8 @@ using System.Collections.ObjectModel;
 using System.Text;
 
 namespace RoyAppMaui.Services.Impl;
-public class FileService(IDataService dataService, IDateTimeService dateTimeService, IFileSaver fileSaver) : IFileService
+public class FileService(IDataService dataService,
+                         IFileSaver fileSaver) : IFileService
 {
     private static readonly string[] _ios = ["public.comma-separated-values-text"];
     private static readonly string[] _android = ["text/comma-separated-values"];
@@ -18,7 +19,7 @@ public class FileService(IDataService dataService, IDateTimeService dateTimeServ
     {
         var items = new ObservableCollection<Sleep>();
         using var parser = new TextFieldParser(selectedFile);
-        parser.TextFieldType = FieldType.Delimited;
+        parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
         parser.SetDelimiters(",");
         while (!parser.EndOfData)
         {
@@ -28,13 +29,13 @@ public class FileService(IDataService dataService, IDateTimeService dateTimeServ
             {
                 sleep.Id = fields[0];
 
-                sleep.Bedtime = dateTimeService.StringToTimeSpan(fields[1]);
-                sleep.BedtimeRec = dateTimeService.TimeSpanToDecimal(sleep.Bedtime);
-                sleep.BedtimeDisplay = dateTimeService.TimeSpanToDateTime((TimeSpan)sleep.Bedtime);
+                sleep.Bedtime = dataService.StringToTimeSpan(fields[1]);
+                sleep.BedtimeRec = dataService.TimeSpanToDecimal(sleep.Bedtime);
+                sleep.BedtimeDisplay = dataService.TimeSpanToDateTime((TimeSpan)sleep.Bedtime);
 
-                sleep.Waketime = dateTimeService.StringToTimeSpan(fields[2]);
-                sleep.WaketimeRec = dateTimeService.TimeSpanToDecimal(sleep.Waketime);
-                sleep.WaketimeDisplay = dateTimeService.TimeSpanToDateTime((TimeSpan)sleep.Waketime);
+                sleep.Waketime = dataService.StringToTimeSpan(fields[2]);
+                sleep.WaketimeRec = dataService.TimeSpanToDecimal(sleep.Waketime);
+                sleep.WaketimeDisplay = dataService.TimeSpanToDateTime((TimeSpan)sleep.Waketime);
 
                 sleep.Duration = dataService.GetDuration(sleep.BedtimeRec, sleep.WaketimeRec);
 

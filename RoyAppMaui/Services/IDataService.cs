@@ -8,4 +8,8 @@ public interface IDataService
     decimal GetAverageOfWaketimes(ObservableCollection<Sleep> sleeps);
     decimal GetDuration(decimal bedtime, decimal waketime);
     string GetExportData(ObservableCollection<Sleep> sleeps);
+    TimeSpan StringToTimeSpan(string time);
+    string TimeSpanToDateTime(TimeSpan newTime);
+    decimal TimeSpanToDecimal(TimeSpan? newTime);
+
 }

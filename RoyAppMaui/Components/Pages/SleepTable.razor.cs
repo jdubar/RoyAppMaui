@@ -9,7 +9,6 @@ namespace RoyAppMaui.Components.Pages;
 public partial class SleepTable
 {
     [Inject] private IDataService DataService { get; set; } = default!;
-    [Inject] private IDateTimeService DateTimeService { get; set; } = default!;
     [Inject] private IDialogService DialogService { get; set; } = default!;
     [Inject] private IFileService FileService { get; set; } = default!;
     [Inject] private ISettingsService Settings { get; set; } = default!;
@@ -158,15 +157,15 @@ public partial class SleepTable
     private void SetBedtimeModelInfo(TimeSpan timeSpan)
     {
         _sleep.Bedtime = timeSpan;
-        _sleep.BedtimeRec = DateTimeService.TimeSpanToDecimal(timeSpan);
-        _sleep.BedtimeDisplay = DateTimeService.TimeSpanToDateTime(timeSpan);
+        _sleep.BedtimeRec = DataService.TimeSpanToDecimal(timeSpan);
+        _sleep.BedtimeDisplay = DataService.TimeSpanToDateTime(timeSpan);
     }
 
     private void SetWaketimeModelInfo(TimeSpan timeSpan)
     {
         _sleep.Waketime = timeSpan;
-        _sleep.WaketimeRec = DateTimeService.TimeSpanToDecimal(timeSpan);
-        _sleep.WaketimeDisplay = DateTimeService.TimeSpanToDateTime(timeSpan);
+        _sleep.WaketimeRec = DataService.TimeSpanToDecimal(timeSpan);
+        _sleep.WaketimeDisplay = DataService.TimeSpanToDateTime(timeSpan);
     }
 
     private async Task<DialogResult> ShowConfirmDeleteDialogAsync()
