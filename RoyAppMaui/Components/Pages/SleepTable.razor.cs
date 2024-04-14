@@ -83,12 +83,12 @@ public partial class SleepTable
                 }
                 else
                 {
-                    Snackbar.Add("No items were imported, check the import file", Severity.Info);
+                    _ = Snackbar.Add("No items were imported, check the import file", Severity.Info);
                 }
             }
             else
             {
-                Snackbar.Add("Error! The items list was null", Severity.Error);
+                _ = Snackbar.Add("Error! The items list was null", Severity.Error);
             }
             _isLoading = false;
         }
@@ -124,17 +124,13 @@ public partial class SleepTable
     {
         if (_items.Count == 0)
         {
-            Snackbar.Add("There are no items to save", Severity.Info);
+            _ = Snackbar.Add("There are no items to save", Severity.Info);
             return;
         }
-        if (await FileService.SaveDataToFile(DataService.GetExportData(_items)))
-        {
-            Snackbar.Add("Successfully saved the file", Severity.Success);
-        }
-        else
-        {
-            Snackbar.Add("Error saving the file!", Severity.Error);
-        }
+
+        _ = await FileService.SaveDataToFile(DataService.GetExportData(_items))
+            ? Snackbar.Add("Successfully saved the file", Severity.Success)
+            : Snackbar.Add("Error saving the file!", Severity.Error);
     }
 
     private async Task RemoveItemAsync(Sleep item)
@@ -144,6 +140,7 @@ public partial class SleepTable
         {
             return;
         }
+
         var index = _items.IndexOf(item);
         _items.RemoveAt(index);
         SetAveragesInView();
@@ -157,6 +154,7 @@ public partial class SleepTable
             WaketimeAvg = 0;
             return;
         }
+
         BedtimeAvg = DataService.GetAverageOfBedtimes(_items);
         WaketimeAvg = DataService.GetAverageOfWaketimes(_items);
     }
@@ -177,18 +175,7 @@ public partial class SleepTable
 
     private async Task<DialogResult> ShowConfirmDeleteDialogAsync()
     {
-        var parameters = new DialogParameters<ConfirmDelete>
-        {
-            { x => x.ContentText, "Do you really want to delete this item? This process cannot be undone." }
-        };
-
-        var options = new DialogOptions()
-        {
-            CloseButton = true,
-            MaxWidth = MaxWidth.ExtraSmall
-        };
-
-        var confirmModal = DialogService.Show<ConfirmDelete>("Delete", parameters, options);
+        var confirmModal = DialogService.Show<ConfirmDelete>("Delete");
         return await confirmModal.Result;
     }
 }
