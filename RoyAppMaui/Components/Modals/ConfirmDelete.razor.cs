@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-
-using MudBlazor;
-
-namespace RoyAppMaui.Components.Modals;
+﻿namespace RoyAppMaui.Components.Modals;
 public partial class ConfirmDelete
 {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = new();

@@ -4,7 +4,6 @@ using CommunityToolkit.Maui.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.LifecycleEvents;
 
-using MudBlazor;
 using MudBlazor.Services;
 using RoyAppMaui.Services;
 using RoyAppMaui.Services.Impl;

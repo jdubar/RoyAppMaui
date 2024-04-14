@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-
-using RoyAppMaui.Enums;
+﻿using RoyAppMaui.Enums;
 using RoyAppMaui.Services;
 
 namespace RoyAppMaui.Components.Layout;

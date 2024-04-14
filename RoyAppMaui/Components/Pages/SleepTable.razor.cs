@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-
-using MudBlazor;
-
-using RoyAppMaui.Components.Modals;
+﻿using RoyAppMaui.Components.Modals;
 using RoyAppMaui.Enums;
 using RoyAppMaui.Models;
 using RoyAppMaui.Services;
@@ -122,7 +118,7 @@ public partial class SleepTable
 
     private async Task SaveFileDataAsync()
     {
-        if (_items.Count == 0)
+        if (_items.Count < 1)
         {
             _ = Snackbar.Add("There are no items to save", Severity.Info);
             return;
@@ -148,7 +144,7 @@ public partial class SleepTable
 
     private void SetAveragesInView()
     {
-        if (_items.Count == 0)
+        if (_items.Count < 1)
         {
             BedtimeAvg = 0;
             WaketimeAvg = 0;
