@@ -22,9 +22,9 @@ public static class MauiProgram
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
             })
-#if WINDOWS
             .ConfigureLifecycleEvents(lifecycle =>
             {
+#if WINDOWS
                 lifecycle.AddWindows((builder) =>
                 {
                     builder.OnWindowCreated(window =>
@@ -32,8 +32,8 @@ public static class MauiProgram
                         window.Title = AppInfo.Current.Name;
                     });
                 });
-            });
 #endif
+            });
 
         builder.Services.AddMauiBlazorWebView();
         builder.Services.AddMudServices(config =>
@@ -41,6 +41,7 @@ public static class MauiProgram
             config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.TopCenter;
             config.SnackbarConfiguration.ClearAfterNavigation = true;
         });
+
         builder.Services.AddSingleton(FileSaver.Default);
         builder.Services.AddSingleton<ISettingsService>(new SettingsService(Preferences.Default));
 
