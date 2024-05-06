@@ -44,7 +44,7 @@
         <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
         <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
         <GenerateTestArtifacts>True</GenerateTestArtifacts>
-        <AppInstallerUri>\\diskstation\Shared\Apps\RoyApp\deploy</AppInstallerUri>
+        <AppInstallerUri>\\diskstation\homes\rtdubar\RoyApp</AppInstallerUri>
         <HoursBetweenUpdateChecks>168</HoursBetweenUpdateChecks>
     </PropertyGroup>
 
