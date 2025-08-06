@@ -25,12 +25,11 @@ public partial class SleepTable
 
     protected override void OnInitialized()
     {
-        NotifyService.EventClick += OnMenuItemClick;
         base.OnInitialized();
+        NotifyService.EventClick += OnMenuItemClick;
     }
 
-    private void AddNewItem() =>
-        _items.Add(new Sleep());
+    private void AddNewItem() => _items.Add(new Sleep());
 
     private void ClearTable()
     {
@@ -89,8 +88,7 @@ public partial class SleepTable
         }
     }
 
-    private void OnCommittedItemChanges(Sleep sleep) =>
-        SetAveragesInView();
+    private void OnCommittedItemChanges(Sleep sleep) => SetAveragesInView();
 
     private void OnMenuItemClick(object? sender, EventArgs e)
     {
@@ -109,11 +107,9 @@ public partial class SleepTable
         InvokeAsync(StateHasChanged);
     }
 
-    private void OnRowsPerPageChanged(int pageSize) =>
-        Settings.RowsPerPage = pageSize;
+    private void OnRowsPerPageChanged(int pageSize) => Settings.RowsPerPage = pageSize;
 
-    private void OnStartedEditingItem(Sleep item) =>
-        _sleep = item;
+    private void OnStartedEditingItem(Sleep item) => _sleep = item;
 
     private async Task SaveFileDataAsync()
     {
@@ -170,7 +166,11 @@ public partial class SleepTable
 
     private async Task<DialogResult> ShowConfirmDeleteDialogAsync()
     {
-        var confirmModal = DialogService.Show<ConfirmDelete>("Delete");
-        return await confirmModal.Result;
+        var dialog = await DialogService.ShowAsync<ConfirmDelete>("Delete");
+        var result = dialog.Result;
+
+        return !result.IsCanceled
+            ? DialogResult.Ok(true)
+            : DialogResult.Cancel();
     }
 }
