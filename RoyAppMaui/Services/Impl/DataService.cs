@@ -8,11 +8,9 @@ public class DataService : IDataService
 {
     private readonly CultureInfo _invariant = CultureInfo.InvariantCulture;
 
-    public decimal GetAverageOfBedtimes(ObservableCollection<Sleep> sleeps) =>
-        decimal.Round(sleeps.Sum(s => s.BedtimeRec) / sleeps.Count, 2);
+    public decimal GetAverageOfBedtimes(ObservableCollection<Sleep> sleeps) => decimal.Round(sleeps.Sum(s => s.BedtimeRec) / sleeps.Count, 2);
 
-    public decimal GetAverageOfWaketimes(ObservableCollection<Sleep> sleeps) =>
-        decimal.Round(sleeps.Sum(s => s.WaketimeRec) / sleeps.Count, 2);
+    public decimal GetAverageOfWaketimes(ObservableCollection<Sleep> sleeps) => decimal.Round(sleeps.Sum(s => s.WaketimeRec) / sleeps.Count, 2);
 
     public decimal GetDuration(decimal bedtime, decimal waketime)
     {
@@ -42,9 +40,7 @@ public class DataService : IDataService
         return dateTime.TimeOfDay;
     }
 
-    public string TimeSpanToDateTime(TimeSpan newTime) =>
-    DateTime.Today.Add(newTime).ToString("hh:mm tt");
+    public string TimeSpanToDateTime(TimeSpan newTime) => DateTime.Today.Add(newTime).ToString("hh:mm tt");
 
-    public decimal TimeSpanToDecimal(TimeSpan? newTime) =>
-        decimal.Round(Convert.ToDecimal(TimeSpan.Parse(newTime.ToString() ?? "0:0", _invariant).TotalHours), 2);
+    public decimal TimeSpanToDecimal(TimeSpan? newTime) => decimal.Round(Convert.ToDecimal(TimeSpan.Parse(newTime.ToString() ?? "0:0", _invariant).TotalHours), 2);
 }

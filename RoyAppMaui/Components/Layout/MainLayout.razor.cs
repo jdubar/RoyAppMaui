@@ -18,7 +18,7 @@ public partial class MainLayout
     {
         if (firstRender)
         {
-            await _mudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
+            await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemPreferenceChanged);
             StateHasChanged();
         }
     }
@@ -30,6 +30,5 @@ public partial class MainLayout
         return Task.CompletedTask;
     }
 
-    private void ThemeToggle() =>
-        Settings.IsDarkMode = !Settings.IsDarkMode;
+    private void ThemeToggle() => Settings.IsDarkMode = !Settings.IsDarkMode;
 }
