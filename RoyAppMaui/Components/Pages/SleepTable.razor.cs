@@ -48,10 +48,10 @@ public partial class SleepTable
         switch (timepicker)
         {
             case TimePickers.Bedtime:
-                SetBedtimeModelInfo((TimeSpan)newTime);
+                _sleep.Bedtime = newTime;
                 break;
             case TimePickers.Waketime:
-                SetWaketimeModelInfo((TimeSpan)newTime);
+                _sleep.Waketime = newTime;
                 break;
             default:
                 return;
@@ -149,10 +149,6 @@ public partial class SleepTable
         BedtimeAvg = DataService.GetAverageOfBedtimes(_items);
         WaketimeAvg = DataService.GetAverageOfWaketimes(_items);
     }
-
-    private void SetBedtimeModelInfo(TimeSpan? timeSpan) => _sleep.Bedtime = timeSpan;
-
-    private void SetWaketimeModelInfo(TimeSpan timeSpan) => _sleep.Waketime = timeSpan;
 
     private async Task<DialogResult> ShowConfirmDeleteDialogAsync()
     {
