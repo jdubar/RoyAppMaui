@@ -30,12 +30,7 @@ public class FileService(IDataService dataService,
                 sleep.Id = fields[0];
 
                 sleep.Bedtime = dataService.StringToTimeSpan(fields[1]);
-                sleep.BedtimeRec = dataService.TimeSpanToDecimal(sleep.Bedtime);
-                sleep.BedtimeDisplay = dataService.TimeSpanToDateTime((TimeSpan)sleep.Bedtime);
-
                 sleep.Waketime = dataService.StringToTimeSpan(fields[2]);
-                sleep.WaketimeRec = dataService.TimeSpanToDecimal(sleep.Waketime);
-                sleep.WaketimeDisplay = dataService.TimeSpanToDateTime((TimeSpan)sleep.Waketime);
 
                 sleep.Duration = dataService.GetDuration(sleep.BedtimeRec, sleep.WaketimeRec);
 

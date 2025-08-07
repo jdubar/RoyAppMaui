@@ -150,19 +150,9 @@ public partial class SleepTable
         WaketimeAvg = DataService.GetAverageOfWaketimes(_items);
     }
 
-    private void SetBedtimeModelInfo(TimeSpan timeSpan)
-    {
-        _sleep.Bedtime = timeSpan;
-        _sleep.BedtimeRec = DataService.TimeSpanToDecimal(timeSpan);
-        _sleep.BedtimeDisplay = DataService.TimeSpanToDateTime(timeSpan);
-    }
+    private void SetBedtimeModelInfo(TimeSpan? timeSpan) => _sleep.Bedtime = timeSpan;
 
-    private void SetWaketimeModelInfo(TimeSpan timeSpan)
-    {
-        _sleep.Waketime = timeSpan;
-        _sleep.WaketimeRec = DataService.TimeSpanToDecimal(timeSpan);
-        _sleep.WaketimeDisplay = DataService.TimeSpanToDateTime(timeSpan);
-    }
+    private void SetWaketimeModelInfo(TimeSpan timeSpan) => _sleep.Waketime = timeSpan;
 
     private async Task<DialogResult> ShowConfirmDeleteDialogAsync()
     {
