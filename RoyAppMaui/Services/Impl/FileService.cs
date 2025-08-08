@@ -4,17 +4,23 @@ using Microsoft.VisualBasic.FileIO;
 
 using RoyAppMaui.Extensions;
 using RoyAppMaui.Models;
+using RoyAppMaui.Utilities;
+
 using System.Collections.ObjectModel;
 using System.Text;
 
 namespace RoyAppMaui.Services.Impl;
-public class FileService(IDataService dataService, IFileSaver fileSaver) : IFileService
+public class FileService(IFileSaver fileSaver) : IFileService
 {
     private static readonly string[] _ios = ["public.comma-separated-values-text"];
     private static readonly string[] _android = ["text/comma-separated-values"];
     private static readonly string[] _win = [".csv"];
     private static readonly string[] _tizen = ["*/*"];
     private static readonly string[] _mac = ["UTType.commaSeparatedText"];
+
+    public event Action OnExportRequested;
+
+    public void RequestExport() => OnExportRequested?.Invoke();
 
     public ObservableCollection<Sleep> ParseImportFileData(string selectedFile)
     {
@@ -33,12 +39,25 @@ public class FileService(IDataService dataService, IFileSaver fileSaver) : IFile
                 sleep.Bedtime = fields[1].ToTimeSpan();
                 sleep.Waketime = fields[2].ToTimeSpan();
 
-                sleep.Duration = dataService.GetDuration(sleep.BedtimeRec, sleep.WaketimeRec);
+                sleep.Duration = SleepUtilities.GetSleepDuration(sleep.BedtimeRec, sleep.WaketimeRec);
 
                 items.Add(sleep);
             }
         }
         return items;
+    }
+
+    public string GetExportData(IEnumerable<Sleep> sleeps)
+    {
+        var sb = new StringBuilder();
+        _ = sb.AppendLine("Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal)");
+        foreach (var sleep in sleeps)
+        {
+            _ = sb.AppendLine($"{sleep.Id},{sleep.BedtimeDisplay},{sleep.BedtimeRec},{sleep.WaketimeDisplay},{sleep.WaketimeRec}");
+        }
+        _ = sb.AppendLine($"\r\nBedtime Average: {sleeps.GetAverage(s => s.BedtimeRec)}");
+        _ = sb.AppendLine($"Waketime Average: {sleeps.GetAverage(s => s.WaketimeRec)}");
+        return sb.ToString();
     }
 
     public async Task<bool> SaveDataToFile(string data)
