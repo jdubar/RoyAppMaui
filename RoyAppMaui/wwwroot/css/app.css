@@ -69,10 +69,6 @@ h1:focus {
     display: none;
 }
 
-.menu-customized {
-    width: 220px;
-}
-
 @supports (-webkit-touch-callout: none) {
     .status-bar-safe-area {
         display: flex;
@@ -87,4 +83,15 @@ h1:focus {
     .flex-column, .navbar-brand {
         padding-left: env(safe-area-inset-left);
     }
+}
+
+.mud-field-decimal-display {
+    width: 60px !important;
+    text-align: center !important;
+}
+
+.fab-fixed-position {
+    position: fixed !important;
+    bottom: 15px !important;
+    right: 0px !important;
 }
