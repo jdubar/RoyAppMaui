@@ -1,6 +1,7 @@
 ﻿@page "/"
 
 @using RoyAppMaui.Components.Controls
+@using RoyAppMaui.Components.Modals
 @using RoyAppMaui.Enums
 @using RoyAppMaui.Models
 
@@ -10,8 +11,6 @@
              Elevation="25"
              FixedHeader="true"
              FixedFooter="true"
-             EditMode="DataGridEditMode.Form"
-             EditTrigger="DataGridEditTrigger.Manual"
              Height="calc(100vh - 220px)"
              Items="_items"
              Loading="@_isLoading"
@@ -19,37 +18,19 @@
              ReadOnly="false"
              RowsPerPage="Settings.RowsPerPage"
              RowsPerPageChanged="OnRowsPerPageChanged"
-             StartedEditingItem="OnStartedEditingItem"
              CommittedItemChanges="OnCommittedItemChanges">
     <Columns>
-        <PropertyColumn Property="x => x.Id">
-            <EditTemplate>
-                <MudTextField @bind-Value="context.Item.Id"
-                              Label="Id" />
-            </EditTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.BedtimeDisplay" Title="Bedtime">
-            <EditTemplate>
-                <TimeSelection Label="Bedtime"
-                               Time="context.Item.Bedtime"
-                               TimeChanged="args => HandleTimeChange(TimePickers.Bedtime, args)" />
-            </EditTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.BedtimeRec" IsEditable="false" Title="(As Decimal)" />
-        <PropertyColumn Property="x => x.WaketimeDisplay" Title="Waketime">
-            <EditTemplate>
-                <TimeSelection Label="Waketime"
-                               Time="context.Item.Waketime"
-                               TimeChanged="args => HandleTimeChange(TimePickers.Waketime, args)" />
-            </EditTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.WaketimeRec" IsEditable="false" Title="(As Decimal)" />
-        <PropertyColumn Property="x => x.Duration" IsEditable="false" />
+        <PropertyColumn Property="x => x.Id" />
+        <PropertyColumn Property="x => x.BedtimeDisplay" Title="Bedtime" />
+        <PropertyColumn Property="x => x.BedtimeRec" Editable="false" Title="(As Decimal)" />
+        <PropertyColumn Property="x => x.WaketimeDisplay" Title="Waketime" />
+        <PropertyColumn Property="x => x.WaketimeRec" Editable="false" Title="(As Decimal)" />
+        <PropertyColumn Property="x => x.Duration" Editable="false" />
         <TemplateColumn Filterable="false" Sortable="false">
             <CellTemplate>
                 <MudIconButton Size="@Size.Small"
                                Icon="@Icons.Material.Filled.Edit"
-                               OnClick="@context.Actions.StartEditingItemAsync" />
+                               OnClick="@(() => OnModifyItem(context.Item))" />
                 <MudIconButton Size="@Size.Small"
                                Icon="@Icons.Material.Filled.Delete"
                                Color="Color.Error"
@@ -65,9 +46,33 @@
     <AverageField Label="Bedtime Avg" Value="@BedtimeAvg"/>
     <AverageField Label="Waketime Avg" Value="@WaketimeAvg" />
 </div>
-<MudItem Class="d-flex justify-end flex-grow-1 gap-4 mr-5"
-         Style="position:fixed; bottom:15px;right:0">
+<MudItem Class="fab-fixed-position d-flex justify-end flex-grow-1 gap-4 mr-5">
     <MudFab Color="Color.Success"
-            OnClick="AddNewItem"
+            OnClick="ShowAddNewItemOverlay"
             StartIcon="@Icons.Material.Filled.Add" />
 </MudItem>
+
+<MudOverlay @bind-Visible="_showModifyItemDialog" DarkBackground>
+    <MudPaper Class="pa-4" Style="width:400px;">
+        <MudForm @ref="itemForm" @bind-IsValid="@isValidItem">
+            <MudText Class="mb-5" Typo="Typo.h6">Modify Bedtime</MudText>
+
+            <MudTextField @bind-Value="@_selectedItem.Id" Label="Id" Variant="Variant.Outlined" Required RequiredError="An Id must be supplied!" />
+
+            <MudStack Row="true">
+                <MudTimePicker AmPm="true" Label="Bedtime" Editable="true" Variant="Variant.Outlined" Time="_selectedItem.Bedtime" TimeChanged="args => HandleTimeChange(TimePickers.Bedtime, args)" />
+                <MudField Class="mud-field-decimal-display" Label="Decimal" Variant="Variant.Outlined">@_selectedItem.BedtimeRec</MudField>
+            </MudStack>
+
+            <MudStack Row="true">
+                <MudTimePicker AmPm="true" Label="Waketime" Editable="true" Variant="Variant.Outlined" Time="_selectedItem.Waketime" TimeChanged="args => HandleTimeChange(TimePickers.Waketime, args)" />
+                <MudField Class="mud-field-decimal-display" Label="Decimal" Variant="Variant.Outlined">@_selectedItem.WaketimeRec</MudField>
+            </MudStack>
+
+            <MudStack Class="mt-5" Row="true" Justify="Justify.FlexEnd">
+                <MudButton OnClick="@OnSaveBedtimeItem" Variant="Variant.Filled" Color="Color.Primary">Save</MudButton>
+                <MudButton OnClick="@OnCloseOverlay" Variant="Variant.Filled">Cancel</MudButton>
+            </MudStack>
+        </MudForm>
+    </MudPaper>
+</MudOverlay>
