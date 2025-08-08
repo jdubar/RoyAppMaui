@@ -9,28 +9,48 @@
 <MudPopoverProvider />
 <MudSnackbarProvider />
 
-<MudLayout>
-    <MudAppBar Elevation="1">
-        <MudAvatar>
-            <MudImage Elevation="25"
-                      Src="images/portrait.jpg" />
-        </MudAvatar>
-        <MudText Class="ml-3"
-                 Typo="Typo.h5">
-            RoyApp
-        </MudText>
+<CascadingValue Value="@ImportFilePath">
+    <CascadingValue Value="@IsClearDataGrid">
+        <MudLayout>
+            <MudAppBar Elevation="1">
+                <MudAvatar>
+                    <MudImage Elevation="25"
+                              Src="images/portrait.jpg" />
+                </MudAvatar>
+                <MudText Class="ml-3"
+                         Typo="Typo.h5">
+                    RoyApp
+                </MudText>
 
-        <MudSpacer />
+                <MudSpacer />
 
-        <MudTooltip Text="Toggle the theme">
-            <MudIconButton Color="@ThemeIconColor"
-                           Icon="@ThemeIcon"
-                           OnClick="ThemeToggle" />
-        </MudTooltip>
+                <MudTooltip Text="Toggle the theme">
+                    <MudIconButton Color="@ThemeIconColor"
+                                   Icon="@ThemeIcon"
+                                   OnClick="ThemeToggle" />
+                </MudTooltip>
 
-        <MainMenu />
-    </MudAppBar>
-    <MudMainContent>
-        @Body
-    </MudMainContent>
-</MudLayout>
+                <MudMenu AnchorOrigin="Origin.BottomRight"
+                         Color="Color.Inherit"
+                         Icon="@Icons.Material.Filled.MoreVert"
+                         TransformOrigin="Origin.TopRight">
+                    <MudMenuItem Icon="@Icons.Material.Filled.FileUpload"
+                                 Label="Import a data file"
+                                 OnClick="@OnImportDataClick" />
+                    <MudMenuItem Icon="@Icons.Material.Filled.Save"
+                                 Label="Save data to file"
+                                 OnClick="@OnExportDataClick" />
+                    <MudDivider />
+                    <MudMenuItem Icon="@Icons.Material.Filled.PlaylistRemove"
+                                 IconColor="Color.Error"
+                                 Label="Clear the list"
+                                 OnClick="@OnClearGridClick"/>
+                </MudMenu>
+            </MudAppBar>
+
+            <MudMainContent>
+                @Body
+            </MudMainContent>
+        </MudLayout>
+    </CascadingValue>
+</CascadingValue>
