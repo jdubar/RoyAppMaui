@@ -4,7 +4,6 @@ using Microsoft.VisualBasic.FileIO;
 
 using RoyAppMaui.Extensions;
 using RoyAppMaui.Models;
-using RoyAppMaui.Utilities;
 
 using System.Collections.ObjectModel;
 using System.Text;
@@ -18,7 +17,7 @@ public class FileService(IFileSaver fileSaver) : IFileService
     private static readonly string[] _tizen = ["*/*"];
     private static readonly string[] _mac = ["UTType.commaSeparatedText"];
 
-    public event Action OnExportRequested;
+    public event Action? OnExportRequested;
 
     public void RequestExport() => OnExportRequested?.Invoke();
 
@@ -38,8 +37,6 @@ public class FileService(IFileSaver fileSaver) : IFileService
 
                 sleep.Bedtime = fields[1].ToTimeSpan();
                 sleep.Waketime = fields[2].ToTimeSpan();
-
-                sleep.Duration = SleepUtilities.GetSleepDuration(sleep.BedtimeRec, sleep.WaketimeRec);
 
                 items.Add(sleep);
             }

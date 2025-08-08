@@ -3,7 +3,6 @@ using RoyAppMaui.Enums;
 using RoyAppMaui.Extensions;
 using RoyAppMaui.Models;
 using RoyAppMaui.Services;
-using RoyAppMaui.Utilities;
 
 using System.Collections.ObjectModel;
 
@@ -82,7 +81,6 @@ public partial class SleepTable
             default:
                 return;
         }
-        _selectedItem.Duration = SleepUtilities.GetSleepDuration(_selectedItem.BedtimeRec, _selectedItem.WaketimeRec);
     }
 
     private async Task ImportFileDataAsync(string filePath)
