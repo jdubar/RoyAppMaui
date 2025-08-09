@@ -1,11 +1,13 @@
 ﻿using CommunityToolkit.Maui.Storage;
 
-using Microsoft.VisualBasic.FileIO;
+using CsvHelper;
+using CsvHelper.Configuration;
 
+using RoyAppMaui.ClassMaps;
 using RoyAppMaui.Extensions;
 using RoyAppMaui.Models;
 
-using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Text;
 
 namespace RoyAppMaui.Services.Impl;
@@ -17,31 +19,18 @@ public class FileService(IFileSaver fileSaver) : IFileService
     private static readonly string[] _tizen = ["*/*"];
     private static readonly string[] _mac = ["UTType.commaSeparatedText"];
 
-    public event Action? OnExportRequested;
-
-    public void RequestExport() => OnExportRequested?.Invoke();
-
-    public ObservableCollection<Sleep> ParseImportFileData(string selectedFile)
+    public IEnumerable<Sleep> ImportSleepDataFromCsv(string filePath)
     {
-        var items = new ObservableCollection<Sleep>();
-        using var parser = new TextFieldParser(selectedFile);
-        parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
-        parser.SetDelimiters(",");
-        while (!parser.EndOfData)
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
-            var sleep = new Sleep();
-            var fields = parser.ReadFields();
-            if (fields != null && fields.Length == 3)
-            {
-                sleep.Id = fields[0];
+            HasHeaderRecord = false
+        };
 
-                sleep.Bedtime = fields[1].ToTimeSpan();
-                sleep.Waketime = fields[2].ToTimeSpan();
-
-                items.Add(sleep);
-            }
-        }
-        return items;
+        using var reader = new StreamReader(filePath);
+        using var csv = new CsvReader(reader, config);
+        csv.Context.RegisterClassMap<SleepMap>();
+        var records = csv.GetRecords<Sleep>();
+        return records.ToList();
     }
 
     public string GetExportData(IEnumerable<Sleep> sleeps)

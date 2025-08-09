@@ -9,10 +9,9 @@ using System.Collections.ObjectModel;
 namespace RoyAppMaui.Components.Pages;
 public partial class SleepTable
 {
-    [CascadingParameter] public string ImportFilePath { get; set; } = string.Empty;
-    [CascadingParameter] public bool IsClearDataGrid { get; set; }
     [Inject] private IDialogService DialogService { get; set; } = default!;
     [Inject] private IFileService FileService { get; set; } = default!;
+    [Inject] private IImportExportService ImportExportService { get; set; } = default!;
     [Inject] private ISettingsService Settings { get; set; } = default!;
     [Inject] private ISnackbar Snackbar { get; set; } = default!;
 
@@ -31,23 +30,25 @@ public partial class SleepTable
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        FileService.OnExportRequested += async () => await ExportTableDataAsync();
+        ImportExportService.OnExportRequested += async () => await ExportTableDataAsync();
+        ImportExportService.OnImportRequested += async () => await ImportDataAsync();
     }
 
-    protected override Task OnParametersSetAsync()
+    private async Task ImportDataAsync()
     {
-        if (ImportFilePath is not null)
+        var result = await FileService.SelectImportFile();
+        if (result is null)
         {
-            _ = ImportFileDataAsync(ImportFilePath);
-            ImportFilePath = string.Empty;
+            return;
         }
 
-        if (IsClearDataGrid)
+        if (!result.FileName.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
         {
-            ClearTable();
-            IsClearDataGrid = false;
+            _ = Snackbar.Add("The selected file is not a CSV file!", Severity.Error);
+            return;
         }
-        return base.OnParametersSetAsync();
+
+        await ImportFileDataAsync(result.FullPath);
     }
 
     private void ShowAddNewItemOverlay()
@@ -73,10 +74,10 @@ public partial class SleepTable
         switch (timepicker)
         {
             case TimePickers.Bedtime:
-                _selectedItem.Bedtime = newTime;
+                _selectedItem.Bedtime = (TimeSpan)newTime;
                 break;
             case TimePickers.Waketime:
-                _selectedItem.Waketime = newTime;
+                _selectedItem.Waketime = (TimeSpan)newTime;
                 break;
             default:
                 return;
@@ -88,13 +89,15 @@ public partial class SleepTable
         _isLoading = true;
         ClearTable();
 
-        _items = FileService.ParseImportFileData(filePath);
-        if (_items is null)
+        var data = FileService.ImportSleepDataFromCsv(filePath);
+        if (data is null || !data.Any())
         {
-            _ = Snackbar.Add("Error! The items list was null", Severity.Error);
+            _ = Snackbar.Add("Error! The items list was null or empty", Severity.Error);
             _isLoading = false;
             return;
         }
+
+        _items = new ObservableCollection<Sleep>(data);
 
         if (_items.Count > 0)
         {
@@ -145,13 +148,14 @@ public partial class SleepTable
     {
         if (_items.Count < 1)
         {
-            _ = Snackbar.Add("There are no items to save", Severity.Info);
+            _ = Snackbar.Add("There are no items to export", Severity.Info);
             return;
         }
 
-        var data = FileService.GetExportData(_items);
+        var items = _items.AsEnumerable();
+        var data = FileService.GetExportData(items);
         _ = await FileService.SaveDataToFile(data)
-            ? Snackbar.Add("Successfully saved the file", Severity.Success)
+            ? Snackbar.Add("Successfully exported the data to file", Severity.Success)
             : Snackbar.Add("Error saving the file!", Severity.Error);
     }
 

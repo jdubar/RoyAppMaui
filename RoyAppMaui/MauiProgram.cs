@@ -45,6 +45,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<ISettingsService>(new SettingsService(Preferences.Default));
 
         builder.Services.AddSingleton<IFileService, FileService>();
+        builder.Services.AddScoped<IImportExportService, ImportExportService>();
 
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();

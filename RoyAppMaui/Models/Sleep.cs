@@ -4,8 +4,8 @@ namespace RoyAppMaui.Models;
 public class Sleep
 {
     public string Id { get; set; } = string.Empty;
-    public TimeSpan? Bedtime { get; set; } = new TimeSpan(0, 0, 0);
-    public TimeSpan? Waketime { get; set; } = new TimeSpan(0, 0, 0);
+    public TimeSpan Bedtime { get; set; } = new TimeSpan(0, 0, 0);
+    public TimeSpan Waketime { get; set; } = new TimeSpan(0, 0, 0);
 
     public decimal BedtimeRec => Bedtime.ToHoursAsDecimal();
     public string BedtimeDisplay => Bedtime.ToTimeAsString();
