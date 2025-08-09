@@ -9,6 +9,7 @@ using RoyAppMaui.Services;
 using RoyAppMaui.Services.Impl;
 
 namespace RoyAppMaui;
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = "We will not test the app code behind. There's no logic to test.")]
 public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()

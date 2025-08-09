@@ -7,16 +7,24 @@ public class SleepExtensionsTests
     [MemberData(nameof(SleepAverageTheoryData))]
     public void GetAverage_ReturnsCorrectAverage(List<Sleep> sleeps, Func<Sleep, decimal> selector, decimal expected)
     {
+        // Act
         var actual = sleeps.GetAverage(selector);
+
+        // Assert
         Assert.Equal(expected, actual);
     }
 
     [Fact]
     public void GetAverage_ReturnsZero_WhenEmpty()
     {
+        // Arrange
         var expected = 0m;
         var sleeps = new List<Sleep>();
+
+        // Act
         var actual = sleeps.GetAverage(s => s.BedtimeRec);
+
+        // Assert
         Assert.Equal(expected, actual);
     }
 
