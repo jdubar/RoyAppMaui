@@ -1,13 +1,17 @@
 ﻿using CommunityToolkit.Maui.Storage;
 
-using Microsoft.VisualBasic.FileIO;
+using CsvHelper;
+using CsvHelper.Configuration;
+
+using RoyAppMaui.ClassMaps;
+using RoyAppMaui.Extensions;
 using RoyAppMaui.Models;
-using System.Collections.ObjectModel;
+
+using System.Globalization;
 using System.Text;
 
 namespace RoyAppMaui.Services.Impl;
-public class FileService(IDataService dataService,
-                         IFileSaver fileSaver) : IFileService
+public class FileService(IFileSaver fileSaver) : IFileService
 {
     private static readonly string[] _ios = ["public.comma-separated-values-text"];
     private static readonly string[] _android = ["text/comma-separated-values"];
@@ -15,34 +19,31 @@ public class FileService(IDataService dataService,
     private static readonly string[] _tizen = ["*/*"];
     private static readonly string[] _mac = ["UTType.commaSeparatedText"];
 
-    public ObservableCollection<Sleep> ParseImportFileData(string selectedFile)
+    public IEnumerable<Sleep> ImportSleepDataFromCsv(string filePath)
     {
-        var items = new ObservableCollection<Sleep>();
-        using var parser = new TextFieldParser(selectedFile);
-        parser.TextFieldType = Microsoft.VisualBasic.FileIO.FieldType.Delimited;
-        parser.SetDelimiters(",");
-        while (!parser.EndOfData)
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
-            var sleep = new Sleep();
-            var fields = parser.ReadFields();
-            if (fields != null && fields.Length == 3)
-            {
-                sleep.Id = fields[0];
+            HasHeaderRecord = false
+        };
 
-                sleep.Bedtime = dataService.StringToTimeSpan(fields[1]);
-                sleep.BedtimeRec = dataService.TimeSpanToDecimal(sleep.Bedtime);
-                sleep.BedtimeDisplay = dataService.TimeSpanToDateTime((TimeSpan)sleep.Bedtime);
+        using var reader = new StreamReader(filePath);
+        using var csv = new CsvReader(reader, config);
+        csv.Context.RegisterClassMap<SleepMap>();
+        var records = csv.GetRecords<Sleep>();
+        return records.ToList();
+    }
 
-                sleep.Waketime = dataService.StringToTimeSpan(fields[2]);
-                sleep.WaketimeRec = dataService.TimeSpanToDecimal(sleep.Waketime);
-                sleep.WaketimeDisplay = dataService.TimeSpanToDateTime((TimeSpan)sleep.Waketime);
-
-                sleep.Duration = dataService.GetDuration(sleep.BedtimeRec, sleep.WaketimeRec);
-
-                items.Add(sleep);
-            }
+    public string GetExportData(IEnumerable<Sleep> sleeps)
+    {
+        var sb = new StringBuilder();
+        _ = sb.AppendLine("Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal)");
+        foreach (var sleep in sleeps)
+        {
+            _ = sb.AppendLine($"{sleep.Id},{sleep.BedtimeDisplay},{sleep.BedtimeRec},{sleep.WaketimeDisplay},{sleep.WaketimeRec}");
         }
-        return items;
+        _ = sb.AppendLine($"\r\nBedtime Average: {sleeps.GetAverage(s => s.BedtimeRec)}");
+        _ = sb.AppendLine($"Waketime Average: {sleeps.GetAverage(s => s.WaketimeRec)}");
+        return sb.ToString();
     }
 
     public async Task<bool> SaveDataToFile(string data)

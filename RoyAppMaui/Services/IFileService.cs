@@ -1,10 +1,10 @@
 ﻿using RoyAppMaui.Models;
-using System.Collections.ObjectModel;
 
 namespace RoyAppMaui.Services;
 public interface IFileService
 {
-    ObservableCollection<Sleep> ParseImportFileData(string selectedFile);
+    IEnumerable<Sleep> ImportSleepDataFromCsv(string filePath);
+    string GetExportData(IEnumerable<Sleep> sleeps);
     Task<bool> SaveDataToFile(string data);
     Task<FileResult?> SelectImportFile();
 }

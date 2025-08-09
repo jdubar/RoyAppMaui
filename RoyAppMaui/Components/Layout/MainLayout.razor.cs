@@ -3,6 +3,7 @@
 namespace RoyAppMaui.Components.Layout;
 public partial class MainLayout
 {
+    [Inject] private IImportExportService ImportExportService { get; set; } = default!;
     [Inject] private ISettingsService Settings { get; set; } = default!;
 
     private MudThemeProvider _mudThemeProvider = default!;
@@ -22,6 +23,10 @@ public partial class MainLayout
             StateHasChanged();
         }
     }
+
+    private void OnExportDataClick() => ImportExportService.RequestExport();
+
+    private void OnImportDataClick() => ImportExportService.RequestImport();
 
     private Task OnSystemPreferenceChanged(bool newValue)
     {

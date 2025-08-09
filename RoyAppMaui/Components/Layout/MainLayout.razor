@@ -13,10 +13,10 @@
     <MudAppBar Elevation="1">
         <MudAvatar>
             <MudImage Elevation="25"
-                      Src="images/portrait.jpg" />
+                        Src="images/portrait.jpg" />
         </MudAvatar>
         <MudText Class="ml-3"
-                 Typo="Typo.h5">
+                    Typo="Typo.h5">
             RoyApp
         </MudText>
 
@@ -24,12 +24,23 @@
 
         <MudTooltip Text="Toggle the theme">
             <MudIconButton Color="@ThemeIconColor"
-                           Icon="@ThemeIcon"
-                           OnClick="ThemeToggle" />
+                            Icon="@ThemeIcon"
+                            OnClick="ThemeToggle" />
         </MudTooltip>
 
-        <MainMenu />
+        <MudMenu AnchorOrigin="Origin.BottomRight"
+                    Color="Color.Inherit"
+                    Icon="@Icons.Material.Filled.MoreVert"
+                    TransformOrigin="Origin.TopRight">
+            <MudMenuItem Icon="@Icons.Material.Filled.FileUpload"
+                            Label="Import a data file"
+                            OnClick="@OnImportDataClick" />
+            <MudMenuItem Icon="@Icons.Material.Filled.Save"
+                            Label="Save data to file"
+                            OnClick="@OnExportDataClick" />
+        </MudMenu>
     </MudAppBar>
+
     <MudMainContent>
         @Body
     </MudMainContent>
