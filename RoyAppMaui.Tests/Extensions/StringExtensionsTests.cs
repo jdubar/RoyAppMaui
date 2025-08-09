@@ -13,14 +13,20 @@ public class StringExtensionsTests
     [InlineData("08:30 PM", 20, 30, 0)]
     public void ToTimeSpan_ParsesVariousFormats(string input, int h, int m, int s)
     {
+        // Arrange
         var expected = new TimeSpan(h, m, s);
+
+        // Act
         var actual = input.ToTimeSpan();
+
+        // Assert
         Assert.Equal(expected, actual);
     }
 
     [Fact]
     public void ToTimeSpan_ThrowsFormatException_OnInvalid()
     {
+        // Arrange & Act & Assert
         Assert.Throws<FormatException>(() => "notatime".ToTimeSpan());
     }
 }

@@ -7,6 +7,7 @@ using RoyAppMaui.Services;
 using System.Collections.ObjectModel;
 
 namespace RoyAppMaui.Components.Pages;
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = "We will not test the view code behind. There's no logic to test.")]
 public partial class SleepTable
 {
     [Inject] private IDialogService DialogService { get; set; } = default!;

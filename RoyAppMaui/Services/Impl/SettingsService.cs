@@ -1,4 +1,5 @@
 ﻿namespace RoyAppMaui.Services.Impl;
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = "This is a simple settings service with no complex logic, so we don't need to cover it extensively.")]
 internal class SettingsService(IPreferences settings) : ISettingsService
 {
     private readonly IPreferences Settings = settings;

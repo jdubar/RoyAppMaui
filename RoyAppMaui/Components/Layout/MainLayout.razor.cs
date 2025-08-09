@@ -1,6 +1,7 @@
 ﻿using RoyAppMaui.Services;
 
 namespace RoyAppMaui.Components.Layout;
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = "We will not test the view code behind. There's no logic to test.")]
 public partial class MainLayout
 {
     [Inject] private IImportExportService ImportExportService { get; set; } = default!;
