@@ -1,0 +1,35 @@
+name: Codecov
+
+on:
+  # Trigger analysis when pushing in master or pull requests, and when creating
+  # a pull request.
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  sonarcloud:
+    name: Codecov
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4.1.7
+        with:
+          # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
+
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore /p:ContinuousIntegrationBuild=true
+      - name: Test
+        run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+
+      - name: Codecov
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          token: b42a4b31-e23d-48b7-9df1-db1bf502302a
