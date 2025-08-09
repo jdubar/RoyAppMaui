@@ -1,5 +1,5 @@
 ﻿namespace RoyAppMaui.Services.Impl;
-[[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = "No need to cover actions.")]
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = "No need to cover actions.")]
 public class ImportExportService : IImportExportService
 {
     public event Action? OnExportRequested;
