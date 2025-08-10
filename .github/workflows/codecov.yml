@@ -13,18 +13,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '9.0.x' # Specify the .NET SDK version you need
-
-    - name: Restore dependencies
-      run: dotnet restore
+    - uses: actions/checkout@v4.1.7
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --configuration Release /p:ContinuousIntegrationBuild=true
 
     - name: Run Tests with Code Coverage
       run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
