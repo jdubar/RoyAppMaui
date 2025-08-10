@@ -1,35 +1,35 @@
-name: Codecov
+name: Build and Test
 
 on:
-  # Trigger analysis when pushing in master or pull requests, and when creating
-  # a pull request.
   push:
     branches:
       - master
   pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
+    branches:
+      - master  # Adjust to your default branch
 
 jobs:
-  sonarcloud:
-    name: Codecov
+  build-and-test:
     runs-on: windows-latest
+
     steps:
-      - uses: actions/checkout@v4.1.7
-        with:
-          # Shallow clones should be disabled for a better relevancy of analysis
-          fetch-depth: 0
+    - uses: actions/checkout@v4
 
-      - name: Restore dependencies
-        run: dotnet restore
-      - name: Build
-        run: dotnet build --no-restore /p:ContinuousIntegrationBuild=true
-      - name: Test
-        run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x' # Specify the .NET SDK version you need
 
-      - name: Codecov
-        uses: codecov/codecov-action@v4.5.0
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Run Tests with Code Coverage
+      run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4 # Uses the Codecov GitHub Action
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
