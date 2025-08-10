@@ -90,24 +90,16 @@ public partial class SleepTable
         _isLoading = true;
         ClearTable();
 
-        var data = FileService.ImportSleepDataFromCsv(filePath);
-        if (data is null || !data.Any())
+        var result = FileService.GetSleepDataFromCsv(filePath);
+        if (result.IsFailed)
         {
-            _ = Snackbar.Add("Error! The items list was null or empty", Severity.Error);
+            _ = Snackbar.Add(result.Errors[0].Message, Severity.Error);
             _isLoading = false;
             return;
         }
 
-        _items = new ObservableCollection<Sleep>(data);
-
-        if (_items.Count > 0)
-        {
-            SetAveragesInView();
-        }
-        else
-        {
-            _ = Snackbar.Add("No items were imported, check the import file", Severity.Info);
-        }
+        _items = new ObservableCollection<Sleep>(result.Value);
+        SetAveragesInView();
 
         _isLoading = false;
         await InvokeAsync(StateHasChanged);
