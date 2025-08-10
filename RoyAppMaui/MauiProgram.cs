@@ -43,10 +43,11 @@ public static class MauiProgram
         });
 
         builder.Services.AddSingleton(FileSaver.Default);
+        builder.Services.AddSingleton(FilePicker.Default);
         builder.Services.AddSingleton<ISettingsService>(new SettingsService(Preferences.Default));
 
         builder.Services.AddSingleton<IFileService, FileService>();
-        builder.Services.AddScoped<IImportExportService, ImportExportService>();
+        builder.Services.AddSingleton<IImportExportService, ImportExportService>();
 
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();

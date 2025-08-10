@@ -3,6 +3,8 @@
 using CsvHelper;
 using CsvHelper.Configuration;
 
+using FluentResults;
+
 using RoyAppMaui.ClassMaps;
 using RoyAppMaui.Extensions;
 using RoyAppMaui.Models;
@@ -11,26 +13,42 @@ using System.Globalization;
 using System.Text;
 
 namespace RoyAppMaui.Services.Impl;
-public class FileService(IFileSaver fileSaver) : IFileService
+public class FileService(System.IO.Abstractions.IFileSystem fileSystem, IFileSaver fileSaver, IFilePicker filePicker) : IFileService
 {
-    private static readonly string[] _ios = ["public.comma-separated-values-text"];
-    private static readonly string[] _android = ["text/comma-separated-values"];
-    private static readonly string[] _win = [".csv"];
-    private static readonly string[] _tizen = ["*/*"];
-    private static readonly string[] _mac = ["UTType.commaSeparatedText"];
-
-    public IEnumerable<Sleep> ImportSleepDataFromCsv(string filePath)
+    public Result<List<Sleep>> GetSleepDataFromCsv(string filePath)
     {
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
             HasHeaderRecord = false
         };
 
-        using var reader = new StreamReader(filePath);
-        using var csv = new CsvReader(reader, config);
-        csv.Context.RegisterClassMap<SleepMap>();
-        var records = csv.GetRecords<Sleep>();
-        return records.ToList();
+        try
+        {
+            using var reader = fileSystem.File.OpenText(filePath);
+            using var csv = new CsvReader(reader, config);
+            csv.Context.RegisterClassMap<SleepMap>();
+            var records = csv.GetRecords<Sleep>().ToList();
+
+            return records.Count != 0
+                ? Result.Ok(records)
+                : Result.Fail("No sleep records found in the CSV file.");
+        }
+        catch (FileNotFoundException)
+        {
+            return Result.Fail($"The file at {filePath} was not found.");
+        }
+        catch (DirectoryNotFoundException)
+        {
+            return Result.Fail($"The directory for the file at {filePath} was not found.");
+        }
+        catch (CsvHelperException ex)
+        {
+            return Result.Fail($"CSV parsing error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail($"An unexpected error occurred while reading the file: {ex.Message}");
+        }
     }
 
     public string GetExportData(IEnumerable<Sleep> sleeps)
@@ -60,7 +78,8 @@ public class FileService(IFileSaver fileSaver) : IFileService
             PickerTitle = "Please select an import file",
             FileTypes = GetFilePickerFileTypes()
         };
-        return await FilePicker.Default.PickAsync(options);
+        var file = await filePicker.PickAsync(options);
+        return file;
     }
 
     private static FilePickerFileType? GetFilePickerFileTypes()
@@ -68,11 +87,11 @@ public class FileService(IFileSaver fileSaver) : IFileService
         return new FilePickerFileType(
             new Dictionary<DevicePlatform, IEnumerable<string>>
             {
-                { DevicePlatform.iOS, _ios },
-                { DevicePlatform.Android, _android },
-                { DevicePlatform.WinUI, _win },
-                { DevicePlatform.Tizen, _tizen },
-                { DevicePlatform.macOS, _mac }
+                { DevicePlatform.iOS, ["public.comma-separated-values-text"] },
+                { DevicePlatform.Android, ["text/comma-separated-values"] },
+                { DevicePlatform.WinUI, [".csv"] },
+                { DevicePlatform.Tizen, ["*/*"] },
+                { DevicePlatform.macOS, ["UTType.commaSeparatedText"] }
             });
     }
 }
