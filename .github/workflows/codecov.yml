@@ -1,27 +1,34 @@
-name: Build and Test
+name: Codecov
 
 on:
+  # Trigger analysis when pushing in master or pull requests, and when creating
+  # a pull request.
   push:
     branches:
       - master
   pull_request:
-    branches:
-      - master  # Adjust to your default branch
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
-  build-and-test:
+  sonarcloud:
+    name: Codecov
     runs-on: windows-latest
-
     steps:
-    - uses: actions/checkout@v4.1.7
+      - uses: actions/checkout@v4.1.7
+        with:
+          # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0
+        
+      - name: Build
+        run: dotnet build /p:ContinuousIntegrationBuild=true
+        
+      - name: Test
+        run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 
-    - name: Build
-      run: dotnet build --configuration Release /p:ContinuousIntegrationBuild=true
-
-    - name: Run Tests with Code Coverage
-      run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4 # Uses the Codecov GitHub Action
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Codecov
+        uses: codecov/codecov-action@v4.5.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
