@@ -1,8 +1,11 @@
-﻿using RoyAppMaui.Components.Modals;
+﻿using CommunityToolkit.Maui.Storage;
+
+using RoyAppMaui.Components.Modals;
 using RoyAppMaui.Enums;
 using RoyAppMaui.Extensions;
 using RoyAppMaui.Models;
 using RoyAppMaui.Services;
+using RoyAppMaui.Types;
 
 using System.Collections.ObjectModel;
 
@@ -12,6 +15,8 @@ public partial class SleepTable
 {
     [Inject] private IDialogService DialogService { get; set; } = default!;
     [Inject] private IFileService FileService { get; set; } = default!;
+    [Inject] private IFilePicker FilePicker { get; set; } = default!;
+    [Inject] private IFileSaver FileSaver { get; set; } = default!;
     [Inject] private IImportExportService ImportExportService { get; set; } = default!;
     [Inject] private ISettingsService Settings { get; set; } = default!;
     [Inject] private ISnackbar Snackbar { get; set; } = default!;
@@ -37,7 +42,7 @@ public partial class SleepTable
 
     private async Task ImportDataAsync()
     {
-        var result = await FileService.SelectImportFile();
+        var result = await SelectImportFile();
         if (result is null)
         {
             return;
@@ -145,9 +150,29 @@ public partial class SleepTable
             return;
         }
 
-        _ = await FileService.SaveDataToFile(_items.AsEnumerable())
+        var dataAsBytes = FileService.GetExportData(_items.AsEnumerable());
+        _ = await SaveAsync(dataAsBytes)
             ? Snackbar.Add("Successfully exported the data to file", Severity.Success)
             : Snackbar.Add("Error saving the file!", Severity.Error);
+    }
+
+    private async Task<bool> SaveAsync(byte[] data)
+    {
+        var now = DateTime.Now;
+        using var stream = new MemoryStream(data);
+        var result = await FileSaver.SaveAsync($"RoyApp_{now:yyyy-MM-dd}_{now:hh:mm:ss}.csv", stream);
+        return result.IsSuccessful;
+    }
+
+    private async Task<FileResult?> SelectImportFile()
+    {
+        PickOptions options = new()
+        {
+            PickerTitle = "Please select an import file",
+            FileTypes = FilePickerTypes.GetFilePickerFileTypes()
+        };
+        var file = await FilePicker.PickAsync(options);
+        return file;
     }
 
     private async Task RemoveItemAsync(Sleep item)

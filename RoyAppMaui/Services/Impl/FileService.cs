@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Maui.Storage;
-
-using CsvHelper;
+﻿using CsvHelper;
 using CsvHelper.Configuration;
 
 using FluentResults;
@@ -13,7 +11,7 @@ using System.Globalization;
 using System.Text;
 
 namespace RoyAppMaui.Services.Impl;
-public class FileService(System.IO.Abstractions.IFileSystem fileSystem, IFileSaver fileSaver, IFilePicker filePicker) : IFileService
+public class FileService(System.IO.Abstractions.IFileSystem fileSystem) : IFileService
 {
     public Result<List<Sleep>> GetSleepDataFromCsv(string filePath)
     {
@@ -47,33 +45,7 @@ public class FileService(System.IO.Abstractions.IFileSystem fileSystem, IFileSav
         }
     }
 
-    public async Task<bool> SaveDataToFile(IEnumerable<Sleep> sleeps)
-    {
-        if (!sleeps.Any())
-        {
-            return false;
-        }
-
-        var data = GetExportData(sleeps);
-        using var stream = new MemoryStream(Encoding.Default.GetBytes(data));
-
-        var now = DateTime.Now;
-        var result = await fileSaver.SaveAsync($"RoyApp_{now:yyyy-MM-dd}_{now:hh:mm:ss}.csv", stream);
-        return result.IsSuccessful;
-    }
-
-    public async Task<FileResult?> SelectImportFile()
-    {
-        PickOptions options = new()
-        {
-            PickerTitle = "Please select an import file",
-            FileTypes = GetFilePickerFileTypes()
-        };
-        var file = await filePicker.PickAsync(options);
-        return file;
-    }
-
-    private static string GetExportData(IEnumerable<Sleep> sleeps)
+    public byte[] GetExportData(IEnumerable<Sleep> sleeps)
     {
         const string header = "Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal),Duration";
         var csvsleep = sleeps.Select(s =>
@@ -85,19 +57,7 @@ public class FileService(System.IO.Abstractions.IFileSystem fileSystem, IFileSav
                      $"{Environment.NewLine}Waketime Average: {sleeps.GetAverage(s => s.WaketimeRec)}" +
                      $"{Environment.NewLine}Duration Average: {sleeps.GetAverage(s => s.Duration)}";
 
-        return $"{header}{Environment.NewLine}{data}{Environment.NewLine}{footer}";
-    }
-
-    private static FilePickerFileType? GetFilePickerFileTypes()
-    {
-        return new FilePickerFileType(
-            new Dictionary<DevicePlatform, IEnumerable<string>>
-            {
-                { DevicePlatform.iOS, ["public.comma-separated-values-text"] },
-                { DevicePlatform.Android, ["text/comma-separated-values"] },
-                { DevicePlatform.WinUI, [".csv"] },
-                { DevicePlatform.Tizen, ["*/*"] },
-                { DevicePlatform.macOS, ["UTType.commaSeparatedText"] }
-            });
+        var exportString = $"{header}{Environment.NewLine}{data}{Environment.NewLine}{footer}";
+        return Encoding.UTF8.GetBytes(exportString);
     }
 }
