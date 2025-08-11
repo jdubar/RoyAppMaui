@@ -1,6 +1,20 @@
 namespace RoyAppMaui.Extensions.Tests;
 public class StringExtensionsTests
 {
+    [Fact]
+    public void ToBytes_ReturnsCorrectByteArray()
+    {
+        // Arrange
+        var input = "Say hello to my little friend!";
+        var expected = System.Text.Encoding.UTF8.GetBytes(input);
+
+        // Act
+        var actual = input.ToBytes();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
     [Theory]
     [InlineData("0830", 8, 30, 0)]
     [InlineData("8:30", 8, 30, 0)]
@@ -11,13 +25,13 @@ public class StringExtensionsTests
     [InlineData("08:30 AM", 8, 30, 0)]
     [InlineData("8:30 PM", 20, 30, 0)]
     [InlineData("08:30 PM", 20, 30, 0)]
-    public void ToTimeSpan_ParsesVariousFormats(string input, int h, int m, int s)
+    public void ToTimeSpan_ParsesVariousFormats(string timeAsString, int hour, int min, int sec)
     {
         // Arrange
-        var expected = new TimeSpan(h, m, s);
+        var expected = new TimeSpan(hour, min, sec);
 
         // Act
-        var actual = input.ToTimeSpan();
+        var actual = timeAsString.ToTimeSpan();
 
         // Assert
         Assert.Equal(expected, actual);
