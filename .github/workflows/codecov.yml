@@ -13,7 +13,7 @@ on:
       - reopened
 
 jobs:
-  sonarcloud:
+  codecov:
     name: Codecov
     runs-on: windows-latest
     steps:
@@ -29,6 +29,6 @@ jobs:
         run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 
       - name: Codecov
-        uses: codecov/codecov-action@v4.5.0
+        uses: codecov/codecov-action@v5.4.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
