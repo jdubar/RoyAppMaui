@@ -1,4 +1,5 @@
 ﻿namespace RoyAppMaui.Types;
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = "No logic to test here")]
 public static class FilePickerTypes
 {
     public static FilePickerFileType? GetFilePickerFileTypes()
