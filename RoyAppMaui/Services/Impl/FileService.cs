@@ -8,7 +8,6 @@ using RoyAppMaui.Extensions;
 using RoyAppMaui.Models;
 
 using System.Globalization;
-using System.Text;
 
 namespace RoyAppMaui.Services.Impl;
 public class FileService(System.IO.Abstractions.IFileSystem fileSystem) : IFileService
@@ -45,7 +44,7 @@ public class FileService(System.IO.Abstractions.IFileSystem fileSystem) : IFileS
         }
     }
 
-    public byte[] GetExportData(IEnumerable<Sleep> sleeps)
+    public string GetExportData(IEnumerable<Sleep> sleeps)
     {
         const string header = "Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal),Duration";
         var csvsleep = sleeps.Select(s =>
@@ -57,7 +56,6 @@ public class FileService(System.IO.Abstractions.IFileSystem fileSystem) : IFileS
                      $"{Environment.NewLine}Waketime Average: {sleeps.GetAverage(s => s.WaketimeRec)}" +
                      $"{Environment.NewLine}Duration Average: {sleeps.GetAverage(s => s.Duration)}";
 
-        var exportString = $"{header}{Environment.NewLine}{data}{Environment.NewLine}{footer}";
-        return Encoding.UTF8.GetBytes(exportString);
+        return $"{header}{Environment.NewLine}{data}{Environment.NewLine}{footer}";
     }
 }

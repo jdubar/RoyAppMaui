@@ -150,8 +150,8 @@ public partial class SleepTable
             return;
         }
 
-        var dataAsBytes = FileService.GetExportData(_items.AsEnumerable());
-        _ = await SaveAsync(dataAsBytes)
+        var data = FileService.GetExportData(_items.AsEnumerable());
+        _ = await SaveAsync(data.ToBytes())
             ? Snackbar.Add("Successfully exported the data to file", Severity.Success)
             : Snackbar.Add("Error saving the file!", Severity.Error);
     }
