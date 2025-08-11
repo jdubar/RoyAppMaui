@@ -83,4 +83,24 @@ public class FileServiceTests
         Assert.True(result.IsFailed);
         Assert.Contains("CSV parsing error", result.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public void GetSleepDataFromCsv_UnexpectedException_ReturnsFailure()
+    {
+        // Arrange
+        var filePath = "anyfile.csv";
+        var fileSystem = A.Fake<System.IO.Abstractions.IFileSystem>();
+        A.CallTo(() => fileSystem.File.OpenRead(A<string>._)).Throws(new Exception("Something went wrong"));
+
+        var fileSaver = A.Fake<IFileSaver>();
+        var filePicker = A.Fake<IFilePicker>();
+        var service = new FileService(fileSystem, fileSaver, filePicker);
+
+        // Act
+        var result = service.GetSleepDataFromCsv(filePath);
+
+        // Assert
+        Assert.True(result.IsFailed);
+        Assert.Contains("unexpected error", result.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+    }
 }

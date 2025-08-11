@@ -37,10 +37,6 @@ public class FileService(System.IO.Abstractions.IFileSystem fileSystem, IFileSav
         {
             return Result.Fail($"The file at {filePath} was not found.");
         }
-        catch (DirectoryNotFoundException)
-        {
-            return Result.Fail($"The directory for the file at {filePath} was not found.");
-        }
         catch (CsvHelperException ex)
         {
             return Result.Fail($"CSV parsing error: {ex.Message}");
@@ -51,23 +47,18 @@ public class FileService(System.IO.Abstractions.IFileSystem fileSystem, IFileSav
         }
     }
 
-    public string GetExportData(IEnumerable<Sleep> sleeps)
+    public async Task<bool> SaveDataToFile(IEnumerable<Sleep> sleeps)
     {
-        var sb = new StringBuilder();
-        _ = sb.AppendLine("Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal)");
-        foreach (var sleep in sleeps)
+        if (!sleeps.Any())
         {
-            _ = sb.AppendLine($"{sleep.Id},{sleep.BedtimeDisplay},{sleep.BedtimeRec},{sleep.WaketimeDisplay},{sleep.WaketimeRec}");
+            return false;
         }
-        _ = sb.AppendLine($"\r\nBedtime Average: {sleeps.GetAverage(s => s.BedtimeRec)}");
-        _ = sb.AppendLine($"Waketime Average: {sleeps.GetAverage(s => s.WaketimeRec)}");
-        return sb.ToString();
-    }
 
-    public async Task<bool> SaveDataToFile(string data)
-    {
+        var data = GetExportData(sleeps);
         using var stream = new MemoryStream(Encoding.Default.GetBytes(data));
-        var result = await fileSaver.SaveAsync($"RoyApp_{DateTime.Now:yyyy-MM-dd}_{DateTime.Now:hh:mm:ss}.csv", stream);
+
+        var now = DateTime.Now;
+        var result = await fileSaver.SaveAsync($"RoyApp_{now:yyyy-MM-dd}_{now:hh:mm:ss}.csv", stream);
         return result.IsSuccessful;
     }
 
@@ -80,6 +71,21 @@ public class FileService(System.IO.Abstractions.IFileSystem fileSystem, IFileSav
         };
         var file = await filePicker.PickAsync(options);
         return file;
+    }
+
+    private static string GetExportData(IEnumerable<Sleep> sleeps)
+    {
+        const string header = "Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal),Duration";
+        var csvsleep = sleeps.Select(s =>
+        {
+            return $"{s.Id},{s.BedtimeDisplay},{s.BedtimeRec},{s.WaketimeDisplay},{s.WaketimeRec},{s.Duration}";
+        });
+        var data = string.Join(Environment.NewLine, csvsleep);
+        var footer = $"{Environment.NewLine}Bedtime Average: {sleeps.GetAverage(s => s.BedtimeRec)}" +
+                     $"{Environment.NewLine}Waketime Average: {sleeps.GetAverage(s => s.WaketimeRec)}" +
+                     $"{Environment.NewLine}Duration Average: {sleeps.GetAverage(s => s.Duration)}";
+
+        return $"{header}{Environment.NewLine}{data}{Environment.NewLine}{footer}";
     }
 
     private static FilePickerFileType? GetFilePickerFileTypes()
