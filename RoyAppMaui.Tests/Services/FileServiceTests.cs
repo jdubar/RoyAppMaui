@@ -1,5 +1,3 @@
-using CommunityToolkit.Maui.Storage;
-
 using FakeItEasy;
 
 using RoyAppMaui.Extensions;
@@ -26,9 +24,7 @@ public class FileServiceTests
             { filePath, new MockFileData(fileContent) }
         });
 
-        var fileSaver = A.Fake<IFileSaver>();
-        var filePicker = A.Fake<IFilePicker>();
-        var service = new FileService(fileSystem, fileSaver, filePicker);
+        var service = new FileService(fileSystem);
 
         // Act
         var result = service.GetSleepDataFromCsv(filePath);
@@ -49,10 +45,7 @@ public class FileServiceTests
         // Arrange
         var filePath = "nonexistent.csv";
         var fileSystem = new MockFileSystem();
-
-        var fileSaver = A.Fake<IFileSaver>();
-        var filePicker = A.Fake<IFilePicker>();
-        var service = new FileService(fileSystem, fileSaver, filePicker);
+        var service = new FileService(fileSystem);
 
         // Act
         var result = service.GetSleepDataFromCsv(filePath);
@@ -72,9 +65,7 @@ public class FileServiceTests
         {
             { filePath, new MockFileData(fileContent) }
         });
-        var fileSaver = A.Fake<IFileSaver>();
-        var filePicker = A.Fake<IFilePicker>();
-        var service = new FileService(fileSystem, fileSaver, filePicker);
+        var service = new FileService(fileSystem);
 
         // Act
         var result = service.GetSleepDataFromCsv(filePath);
@@ -92,9 +83,7 @@ public class FileServiceTests
         var fileSystem = A.Fake<System.IO.Abstractions.IFileSystem>();
         A.CallTo(() => fileSystem.File.OpenRead(A<string>._)).Throws(new Exception("Something went wrong"));
 
-        var fileSaver = A.Fake<IFileSaver>();
-        var filePicker = A.Fake<IFilePicker>();
-        var service = new FileService(fileSystem, fileSaver, filePicker);
+        var service = new FileService(fileSystem);
 
         // Act
         var result = service.GetSleepDataFromCsv(filePath);
