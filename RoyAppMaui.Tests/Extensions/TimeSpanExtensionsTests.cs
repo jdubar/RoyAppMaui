@@ -7,6 +7,9 @@ public class TimeSpanExtensionsTests
     [InlineData(8, 30, 0, "08:30 AM")]
     [InlineData(15, 45, 0, "03:45 PM")]
     [InlineData(23, 59, 0, "11:59 PM")]
+    [InlineData(24, 0, 0, "12:00 AM")] // Normalizes to next day
+    [InlineData(25, 15, 0, "01:15 AM")] // Normalizes to next day
+    [InlineData(-1, 0, 0, "Invalid Time")] // Negative TimeSpan
     public void ToTimeAsString_ReturnsExpectedFormat(int h, int m, int s, string expected)
     {
         // Arrange

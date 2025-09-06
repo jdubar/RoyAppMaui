@@ -28,6 +28,20 @@ public class SleepExtensionsTests
         Assert.Equal(expected, actual);
     }
 
+    [Fact]
+    public void GetAverage_ReturnsZero_WhenSleepsIsNull()
+    {
+        // Arrange
+        var expected = 0m;
+        List<Sleep>? sleeps = null;
+
+        // Act
+        var actual = sleeps!.GetAverage(s => s.BedtimeRec);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
     public static TheoryData<List<Sleep>, Func<Sleep, decimal>, decimal> SleepAverageTheoryData => new()
     {
         {
