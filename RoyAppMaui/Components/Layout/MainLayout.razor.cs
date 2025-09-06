@@ -5,20 +5,20 @@ namespace RoyAppMaui.Components.Layout;
 public partial class MainLayout
 {
     [Inject] private IImportExportService ImportExportService { get; set; } = default!;
-    [Inject] private ISettingsService Settings { get; set; } = default!;
+    [Inject] private ISettingsService SettingsService { get; set; } = default!;
 
     private MudThemeProvider _mudThemeProvider = default!;
 
-    private string ThemeIcon => Settings.IsDarkMode
+    private string ThemeIcon => SettingsService.IsDarkMode
                              ? Icons.Material.Outlined.DarkMode
                              : Icons.Material.Outlined.LightMode;
-    private MudBlazor.Color ThemeIconColor => Settings.IsDarkMode
+    private MudBlazor.Color ThemeIconColor => SettingsService.IsDarkMode
                                            ? MudBlazor.Color.Inherit
                                            : MudBlazor.Color.Warning;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && _mudThemeProvider is not null)
         {
             await _mudThemeProvider.WatchSystemDarkModeAsync(OnSystemPreferenceChanged);
             StateHasChanged();
@@ -31,10 +31,10 @@ public partial class MainLayout
 
     private Task OnSystemPreferenceChanged(bool newValue)
     {
-        Settings.IsDarkMode = newValue;
+        SettingsService.IsDarkMode = newValue;
         StateHasChanged();
         return Task.CompletedTask;
     }
 
-    private void ThemeToggle() => Settings.IsDarkMode = !Settings.IsDarkMode;
+    private void ThemeToggle() => SettingsService.IsDarkMode = !SettingsService.IsDarkMode;
 }
