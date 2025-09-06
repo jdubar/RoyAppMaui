@@ -1,12 +1,25 @@
 using CsvHelper;
 using CsvHelper.Configuration;
+using CsvHelper.TypeConversion;
+
+using FakeItEasy;
+
+using RoyAppMaui.Models;
 
 namespace RoyAppMaui.Converters.Tests;
 public class TimeSpanConverterTests
 {
-    private readonly IReaderRow _dummyReaderRow = null!;
-    private readonly IWriterRow _dummyWriterRow = null!;
-    private readonly MemberMapData _dummyMemberMapData = null!;
+    private readonly IReaderRow _readerRow = A.Fake<IReaderRow>();
+    private readonly IWriterRow _writerRow = A.Fake<IWriterRow>();
+    private readonly MemberMapData _memberMapData = CreateDummyMemberMapData();
+
+    private static MemberMapData CreateDummyMemberMapData()
+    {
+        var map = new DefaultClassMap<Sleep>();
+        map.Map(m => m.Bedtime);
+        var memberMap = map.MemberMaps[0];
+        return memberMap.Data;
+    }
 
     [Theory]
     [InlineData("08:30", 8, 30, 0)]
@@ -23,7 +36,7 @@ public class TimeSpanConverterTests
         var expected = new TimeSpan(h, m, s);
 
         // Act
-        var actual = converter.ConvertFromString(input, _dummyReaderRow, _dummyMemberMapData);
+        var actual = converter.ConvertFromString(input, _readerRow, _memberMapData);
 
         // Assert
         Assert.IsType<TimeSpan>(actual);
@@ -34,14 +47,14 @@ public class TimeSpanConverterTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void ConvertFromString_EmptyOrNull_ReturnsEmptyString(string? input)
+    public void ConvertFromString_EmptyOrNull_ReturnsTimespanZero(string? input)
     {
         // Arrange
         var converter = new TimeSpanConverter();
-        var expected = string.Empty;
+        var expected = TimeSpan.Zero;
 
         // Act
-        var actual = converter.ConvertFromString(input, _dummyReaderRow, _dummyMemberMapData);
+        var actual = converter.ConvertFromString(input, _readerRow, _memberMapData);
 
         // Assert
         Assert.Equal(expected, actual);
@@ -52,9 +65,13 @@ public class TimeSpanConverterTests
     {
         // Arrange
         var converter = new TimeSpanConverter();
+        var reader = A.Fake<IReader>();
+        A.CallTo(() => reader.Configuration).Returns(new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture));
+        var context = new CsvContext(reader);
+        A.CallTo(() => _readerRow.Context).Returns(context);
 
         // Act & Assert
-        Assert.Throws<FormatException>(() => converter.ConvertFromString("notatime", _dummyReaderRow, _dummyMemberMapData));
+        Assert.Throws<TypeConverterException>(() => converter.ConvertFromString("notatime", _readerRow, _memberMapData));
     }
 
     [Theory]
@@ -67,7 +84,7 @@ public class TimeSpanConverterTests
         var value = new TimeSpan(h, m, s);
 
         // Act
-        var actual = converter.ConvertToString(value, _dummyWriterRow, _dummyMemberMapData);
+        var actual = converter.ConvertToString(value, _writerRow, _memberMapData);
 
         // Assert
         Assert.Equal(expected, actual);
@@ -80,7 +97,7 @@ public class TimeSpanConverterTests
         var converter = new TimeSpanConverter();
 
         // Act & Assert
-        Assert.Equal(string.Empty, converter.ConvertToString(null, _dummyWriterRow, _dummyMemberMapData));
-        Assert.Equal(string.Empty, converter.ConvertToString("notatimespan", _dummyWriterRow, _dummyMemberMapData));
+        Assert.Equal(string.Empty, converter.ConvertToString(null, _writerRow, _memberMapData));
+        Assert.Equal(string.Empty, converter.ConvertToString("notatimespan", _writerRow, _memberMapData));
     }
 }

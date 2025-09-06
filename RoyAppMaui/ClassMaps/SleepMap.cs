@@ -17,11 +17,12 @@ public sealed class SleepMap : ClassMap<Sleep>
     /// </summary>
     public SleepMap()
     {
+        AutoMap(System.Globalization.CultureInfo.InvariantCulture);
+
         Map(m => m.Id).Index(0);
         Map(m => m.Bedtime).Index(1).TypeConverter<TimeSpanConverter>();
         Map(m => m.Waketime).Index(2).TypeConverter<TimeSpanConverter>();
 
-        AutoMap(System.Globalization.CultureInfo.InvariantCulture);
         MemberMaps.Where(m => m.Data?.Member?.Name is
                               not (nameof(Sleep.Id)) and
                               not (nameof(Sleep.Bedtime)) and
