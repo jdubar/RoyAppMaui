@@ -37,9 +37,9 @@ public static class MauiProgram
         });
 
         // Platform/Toolkit Services
+        builder.Services.AddSingleton<System.IO.Abstractions.IFileSystem, System.IO.Abstractions.FileSystem>();
         builder.Services.AddSingleton(FileSaver.Default);
         builder.Services.AddSingleton(FilePicker.Default);
-        builder.Services.AddSingleton<System.IO.Abstractions.IFileSystem, System.IO.Abstractions.FileSystem>();
 
         // App Services
         builder.Services.AddSingleton<ISettingsService>(new SettingsService(Preferences.Default));
