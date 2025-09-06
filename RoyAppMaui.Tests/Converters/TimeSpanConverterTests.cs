@@ -19,7 +19,7 @@ public class TimeSpanConverterTests
     public void ConvertFromString_ValidTimeSpanStrings_ReturnsTimeSpan(string input, int h, int m, int s)
     {
         // Arrange
-        var converter = new TimeSpanConverter<TimeSpan>();
+        var converter = new TimeSpanConverter();
         var expected = new TimeSpan(h, m, s);
 
         // Act
@@ -37,7 +37,7 @@ public class TimeSpanConverterTests
     public void ConvertFromString_EmptyOrNull_ReturnsEmptyString(string? input)
     {
         // Arrange
-        var converter = new TimeSpanConverter<TimeSpan>();
+        var converter = new TimeSpanConverter();
         var expected = string.Empty;
 
         // Act
@@ -51,7 +51,7 @@ public class TimeSpanConverterTests
     public void ConvertFromString_InvalidFormat_ThrowsFormatException()
     {
         // Arrange
-        var converter = new TimeSpanConverter<TimeSpan>();
+        var converter = new TimeSpanConverter();
 
         // Act & Assert
         Assert.Throws<FormatException>(() => converter.ConvertFromString("notatime", _dummyReaderRow, _dummyMemberMapData));
@@ -63,7 +63,7 @@ public class TimeSpanConverterTests
     public void ConvertToString_ValidTimeSpan_ReturnsFormattedString(int h, int m, int s, string expected)
     {
         // Arrange
-        var converter = new TimeSpanConverter<TimeSpan>();
+        var converter = new TimeSpanConverter();
         var value = new TimeSpan(h, m, s);
 
         // Act
@@ -77,7 +77,7 @@ public class TimeSpanConverterTests
     public void ConvertToString_NullOrNotTimeSpan_ReturnsEmptyString()
     {
         // Arrange
-        var converter = new TimeSpanConverter<TimeSpan>();
+        var converter = new TimeSpanConverter();
 
         // Act & Assert
         Assert.Equal(string.Empty, converter.ConvertToString(null, _dummyWriterRow, _dummyMemberMapData));

@@ -30,8 +30,8 @@ public partial class SleepTable
     private bool _isLoading;
     private bool _showModifyItemDialog;
 
-    private decimal BedtimeAvg {  get; set; }
-    private decimal WaketimeAvg {  get; set; }
+    public decimal BedtimeAvg {  get; private set; }
+    public decimal WaketimeAvg {  get; private set; }
 
     protected override void OnInitialized()
     {
@@ -66,8 +66,7 @@ public partial class SleepTable
     private void ClearTable()
     {
         _items.Clear();
-        BedtimeAvg = 0;
-        WaketimeAvg = 0;
+        ResetAverages();
     }
 
     private void HandleTimeChange(TimePickers timepicker, TimeSpan? newTime)
@@ -95,19 +94,23 @@ public partial class SleepTable
         _isLoading = true;
         ClearTable();
 
-        var result = FileService.GetSleepDataFromCsv(filePath);
-        if (result.IsFailed)
+        try
         {
-            _ = Snackbar.Add(result.Errors[0].Message, Severity.Error);
-            _isLoading = false;
-            return;
+            var result = FileService.GetSleepDataFromCsv(filePath);
+            if (result.IsFailed)
+            {
+                _ = Snackbar.Add(result.Errors[0].Message, Severity.Error);
+                return;
+            }
+
+            _items = new ObservableCollection<Sleep>(result.Value);
+            SetAveragesInView();
         }
-
-        _items = new ObservableCollection<Sleep>(result.Value);
-        SetAveragesInView();
-
-        _isLoading = false;
-        await InvokeAsync(StateHasChanged);
+        finally
+        {
+            _isLoading = false;
+            await InvokeAsync(StateHasChanged);
+        }
     }
 
     private void OnCloseOverlay() => _showModifyItemDialog = false;
@@ -188,12 +191,17 @@ public partial class SleepTable
         SetAveragesInView();
     }
 
+    private void ResetAverages()
+    {
+        BedtimeAvg = 0;
+        WaketimeAvg = 0;
+    }
+
     private void SetAveragesInView()
     {
         if (_items.Count < 1)
         {
-            BedtimeAvg = 0;
-            WaketimeAvg = 0;
+            ResetAverages();
             return;
         }
 
