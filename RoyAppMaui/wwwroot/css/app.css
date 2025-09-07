@@ -1,5 +1,8 @@
-﻿html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+﻿@font-face {
+    font-family: 'OpenSansRegular';
+    src: url('/fonts/OpenSans-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 a, .btn-link {
@@ -94,4 +97,58 @@ h1:focus {
     position: fixed !important;
     bottom: 15px !important;
     right: 0px !important;
+}
+
+.spinner {
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+    position: relative;
+}
+
+    .spinner::after {
+        content: "";
+        box-sizing: border-box;
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 4px solid rgba(119,107,231,0.25); /* background track */
+        border-top-color: #7961ea; /* MudBlazor primary color */
+        border-radius: 50%;
+        animation: spinner-circular 1.2s linear infinite;
+    }
+
+@keyframes spinner-circular {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255,255,255,1);
+    color: rgba(66,66,66,1);
+}
+
+body.dark-mode .loading-overlay {
+    background-color: rgba(50,51,61,1);
+    color: rgba(255,255,255,0.6980392156862745);
+}
+
+.loading-content {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    font-size: 25pt;
+    font-family: 'OpenSansRegular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }

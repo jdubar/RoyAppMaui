@@ -1,10 +1,13 @@
-﻿using RoyAppMaui.Services;
+﻿using Microsoft.JSInterop;
+
+using RoyAppMaui.Services;
 
 namespace RoyAppMaui.Components.Layout;
 [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = "We will not test the view code behind. There's no logic to test.")]
 public partial class MainLayout
 {
     [Inject] private IImportExportService ImportExportService { get; set; } = default!;
+    [Inject] private IJSRuntime JS { get; set; } = default!;
     [Inject] private ISettingsService SettingsService { get; set; } = default!;
 
     private MudThemeProvider _mudThemeProvider = default!;
@@ -36,5 +39,9 @@ public partial class MainLayout
         return Task.CompletedTask;
     }
 
-    private void ThemeToggle() => SettingsService.IsDarkMode = !SettingsService.IsDarkMode;
+    private async Task ThemeToggleAsync()
+    {
+        SettingsService.IsDarkMode = !SettingsService.IsDarkMode;
+        await JS.InvokeVoidAsync("setIsDarkModeCookie", SettingsService.IsDarkMode);
+    }
 }

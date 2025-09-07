@@ -13,14 +13,27 @@
 </head>
 
 <body>
+    <script>
+        (function () {
+            function getCookie(name) {
+                const value = "; " + document.cookie;
+                const parts = value.split("; " + name + "=");
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            }
+            var isDark = getCookie("isDarkMode") === "1";
+            if (isDark) {
+                document.body.classList.add("dark-mode");
+            }
+        })();
+    </script>
 
     <div class="status-bar-safe-area"></div>
 
     <div id="app">
-        <div style="position:absolute; top:30vh; width:100%; text-align:center">
-            <div style="display:flex; gap:10px; justify-content:center; align-items:center">
-                <div class="spinner-border" role="status"></div>
-                Loading...
+        <div class="loading-overlay">
+            <div class="loading-content">
+                <div class="spinner" role="status"></div>
+                <span>Loading...</span>
             </div>
         </div>
     </div>
@@ -33,6 +46,12 @@
 
     <script src="_framework/blazor.webview.js" autostart="false"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+
+    <script>
+        window.setIsDarkModeCookie = function (isDark) {
+            document.cookie = "isDarkMode=" + (isDark ? "1" : "0") + "; path=/; max-age=31536000";
+        }
+    </script>
 
 </body>
 
