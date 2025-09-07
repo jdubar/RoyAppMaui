@@ -37,10 +37,14 @@ public class StringExtensionsTests
         Assert.Equal(expected, actual);
     }
 
-    [Fact]
-    public void ToTimeSpan_ThrowsFormatException_OnInvalid()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("notatime")]
+    public void ToTimeSpan_ThrowsFormatException_OnInvalid(string? time)
     {
         // Arrange & Act & Assert
-        Assert.Throws<FormatException>(() => "notatime".ToTimeSpan());
+        Assert.Throws<FormatException>(() => time!.ToTimeSpan());
     }
 }
