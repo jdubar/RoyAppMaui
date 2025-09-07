@@ -1,62 +1,70 @@
 ﻿@inherits LayoutComponentBase
 
 <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@SettingsService.IsDarkMode" />
-<MudDialogProvider MaxWidth="MaxWidth.ExtraSmall"
-                   CloseButton="true"
-                   BackdropClick="false"
-                   Position="DialogPosition.Center"
-                   CloseOnEscapeKey="true" />
+<MudDialogProvider
+    MaxWidth="MaxWidth.ExtraSmall"
+    CloseButton="true"
+    BackdropClick="false"
+    Position="DialogPosition.Center"
+    CloseOnEscapeKey="true" />
 <MudPopoverProvider />
 <MudSnackbarProvider />
 
 <MudLayout>
     <MudAppBar Elevation="1">
         <MudAvatar>
-            <MudImage Elevation="25"
-                      Src="images/portrait.jpg" />
+            <MudImage
+                Elevation="25"
+                Src="images/portrait.jpg" />
         </MudAvatar>
-        <MudText Class="ml-3"
-                 Typo="Typo.h5">
+        <MudText
+            Class="ml-3"
+            Typo="Typo.h5">
             RoyApp
         </MudText>
 
         <MudSpacer />
 
         <MudTooltip Text="Toggle the theme">
-            <MudIconButton Color="@ThemeIconColor"
-                           Icon="@ThemeIcon"
-                           OnClick="ThemeToggleAsync" />
+            <MudIconButton
+                Color="@ThemeIconColor"
+                Icon="@ThemeIcon"
+                OnClick="ThemeToggleAsync" />
         </MudTooltip>
 
-        <MudMenu AnchorOrigin="Origin.BottomRight"
-                 Color="Color.Inherit"
-                 Icon="@Icons.Material.Filled.MoreVert"
-                 TransformOrigin="Origin.TopRight">
-            <MudMenuItem Icon="@Icons.Material.Filled.FileUpload"
-                         Label="Import a data file"
-                         OnClick="@OnImportDataClick" />
-            <MudMenuItem Icon="@Icons.Material.Filled.Save"
-                         Label="Save data to file"
-                         OnClick="@OnExportDataClick" />
+        <MudMenu
+            AnchorOrigin="Origin.BottomRight"
+            Color="Color.Inherit"
+            Icon="@Icons.Material.Filled.MoreVert"
+            TransformOrigin="Origin.TopRight">
+            <MudMenuItem
+                Icon="@Icons.Material.Filled.FileUpload"
+                Label="Import a data file"
+                OnClick="@OnImportDataClick" />
+            <MudMenuItem
+                Icon="@Icons.Material.Filled.Save"
+                Label="Save data to file"
+                OnClick="@OnExportDataClick" />
         </MudMenu>
     </MudAppBar>
 
     <MudMainContent>
-        <MudDataGrid T="Sleep"
-                     Bordered="true"
-                     Dense="true"
-                     Elevation="0"
-                     FixedHeader="true"
-                     FixedFooter="true"
-                     Height="calc(100vh - 13rem);"
-                     Items="_items"
-                     Loading="@_isLoading"
-                     LoadingProgressColor="@Color.Primary"
-                     ReadOnly="false"
-                     RowsPerPage="SettingsService.RowsPerPage"
-                     RowsPerPageChanged="OnRowsPerPageChanged"
-                     Square="true"
-                     CommittedItemChanges="OnCommittedItemChanges">
+        <MudDataGrid
+            T="Sleep"
+            Bordered="true"
+            Dense="true"
+            Elevation="0"
+            FixedHeader="true"
+            FixedFooter="true"
+            Height="calc(100vh - 13rem);"
+            Items="_items"
+            Loading="@_isLoading"
+            LoadingProgressColor="@Color.Primary"
+            ReadOnly="false"
+            RowsPerPage="SettingsService.RowsPerPage"
+            RowsPerPageChanged="OnRowsPerPageChanged"
+            Square="true"
+            CommittedItemChanges="OnCommittedItemChanges">
             <Columns>
                 <PropertyColumn Property="x => x.Id" />
                 <PropertyColumn Property="x => x.BedtimeDisplay" Title="Bedtime" />
@@ -66,13 +74,15 @@
                 <PropertyColumn Property="x => x.Duration" Editable="false" />
                 <TemplateColumn Filterable="false" Sortable="false">
                     <CellTemplate>
-                        <MudIconButton Size="@Size.Small"
-                                       Icon="@Icons.Material.Filled.Edit"
-                                       OnClick="@(() => ModifyItemAsync(context.Item))" />
-                        <MudIconButton Size="@Size.Small"
-                                       Icon="@Icons.Material.Filled.Delete"
-                                       Color="Color.Error"
-                                       OnClick="@(() => RemoveItemAsync(context.Item))" />
+                        <MudIconButton
+                            Size="@Size.Small"
+                            Icon="@Icons.Material.Filled.Edit"
+                            OnClick="@(() => ModifyItemAsync(context.Item))" />
+                        <MudIconButton
+                            Size="@Size.Small"
+                            Icon="@Icons.Material.Filled.Delete"
+                            Color="Color.Error"
+                            OnClick="@(() => RemoveItemAsync(context.Item))" />
                     </CellTemplate>
                 </TemplateColumn>
             </Columns>

@@ -57,6 +57,22 @@ public class FileServiceTests
     }
 
     [Fact]
+    public void GetSleepDataFromCsv_EmptyFilePath_ReturnsFailure()
+    {
+        // Arrange
+        var filePath = string.Empty;
+        var fileSystem = new MockFileSystem();
+        var service = new FileService(fileSystem);
+
+        // Act
+        var result = service.GetSleepDataFromCsv(filePath);
+
+        // Assert
+        Assert.True(result.IsFailed);
+        Assert.Contains("null or empty", result.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void GetSleepDataFromCsv_MalformedCsv_ReturnsFailure()
     {
         // Arrange
