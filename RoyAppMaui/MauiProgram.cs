@@ -43,6 +43,7 @@ public static class MauiProgram
 
         // App Services
         builder.Services.AddSingleton<ISettingsService>(new SettingsService(Preferences.Default));
+        builder.Services.AddScoped<ICustomDialogService, CustomDialogService>();
         builder.Services.AddScoped<IFileService, FileService>();
         builder.Services.AddScoped<IImportExportService, ImportExportService>();
 
