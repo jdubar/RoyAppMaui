@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@SettingsService.IsDarkMode" />
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@SettingsService.IsDarkMode" Theme="@CustomTheme" />
 <MudDialogProvider
     MaxWidth="MaxWidth.ExtraSmall"
     CloseButton="true"
@@ -49,58 +49,7 @@
     </MudAppBar>
 
     <MudMainContent>
-        <MudDataGrid
-            T="Sleep"
-            Bordered="true"
-            Dense="true"
-            Elevation="0"
-            FixedHeader="true"
-            FixedFooter="true"
-            Height="calc(100vh - 13rem);"
-            Items="_items"
-            Loading="@_isLoading"
-            LoadingProgressColor="@Color.Primary"
-            ReadOnly="false"
-            RowsPerPage="SettingsService.RowsPerPage"
-            RowsPerPageChanged="OnRowsPerPageChanged"
-            Square="true"
-            CommittedItemChanges="OnCommittedItemChanges">
-            <Columns>
-                <PropertyColumn Property="x => x.Id" />
-                <PropertyColumn Property="x => x.BedtimeDisplay" Title="Bedtime" />
-                <PropertyColumn Property="x => x.BedtimeRec" Editable="false" Title="(As Decimal)" />
-                <PropertyColumn Property="x => x.WaketimeDisplay" Title="Waketime" />
-                <PropertyColumn Property="x => x.WaketimeRec" Editable="false" Title="(As Decimal)" />
-                <PropertyColumn Property="x => x.Duration" Editable="false" />
-                <TemplateColumn Filterable="false" Sortable="false">
-                    <CellTemplate>
-                        <MudIconButton
-                            Size="@Size.Small"
-                            Icon="@Icons.Material.Filled.Edit"
-                            OnClick="@(() => ModifyItemAsync(context.Item))" />
-                        <MudIconButton
-                            Size="@Size.Small"
-                            Icon="@Icons.Material.Filled.Delete"
-                            Color="Color.Error"
-                            OnClick="@(() => RemoveItemAsync(context.Item))" />
-                    </CellTemplate>
-                </TemplateColumn>
-            </Columns>
-            <PagerContent>
-                <MudDataGridPager T="Sleep" />
-            </PagerContent>
-        </MudDataGrid>
+        @Body
     </MudMainContent>
 
-    <MudDivider />
-
-    <MudAppBar Bottom="true" Fixed="true" Elevation="1" Style="height: 90px" Color="Color.Transparent">
-        <MudStack Row="true" Class="mt-3">
-            <AverageField Label="Bedtime Avg" Value="@BedtimeAvg" />
-            <AverageField Label="Waketime Avg" Value="@WaketimeAvg" />
-        </MudStack>
-        <MudButton Class="ml-5 mt-7" OnClick="@ClearTable" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.PlaylistRemove" Color="Color.Primary">Clear Data</MudButton>
-        <MudSpacer />
-        <MudButton Class="mt-7" OnClick="@AddItemAsync" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" Color="Color.Success">Add</MudButton>
-    </MudAppBar>
 </MudLayout>
