@@ -1,14 +1,15 @@
-﻿using CsvHelper;
+﻿using CommunityToolkit.Maui.Storage;
+
+using CsvHelper;
 using CsvHelper.Configuration;
 
 using FluentResults;
 
 using RoyAppMaui.ClassMaps;
-using RoyAppMaui.Extensions;
 using RoyAppMaui.Models;
+using RoyAppMaui.Types;
 
 using System.Globalization;
-using System.Text;
 
 namespace RoyAppMaui.Services.Impl;
 public class FileService(System.IO.Abstractions.IFileSystem fileSystem) : IFileService
@@ -50,20 +51,51 @@ public class FileService(System.IO.Abstractions.IFileSystem fileSystem) : IFileS
         }
     }
 
-    public string GetExportData(IEnumerable<Sleep> sleeps)
+    public async Task<Result<bool>> SaveBytesToFileAsync(byte[] buffer, string filePath)
     {
-        const string header = "Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal),Duration";
-
-        var sb = new StringBuilder();
-        sb.AppendLine(header);
-        foreach (var sleep in sleeps)
+        try
         {
-            sb.AppendLine($"{sleep.Id},{sleep.BedtimeDisplay},{sleep.BedtimeRec},{sleep.WaketimeDisplay},{sleep.WaketimeRec},{sleep.Duration}");
+            using var stream = new MemoryStream(buffer);
+            var result = await FileSaver.SaveAsync(filePath, stream);
+            return result.IsSuccessful
+                ? Result.Ok(true)
+                : Result.Fail("Failed to save the file.");
+        }
+        catch (FileSaveException ex)
+        {
+            return Result.Fail($"File save error: {ex.Message}");
+        }
+    }
+
+    public async Task<Result<string>> SelectImportFileAsync()
+    {
+        PickOptions options = new()
+        {
+            PickerTitle = "Please select an import file",
+            FileTypes = FilePickerTypes.GetFilePickerFileTypes()
+        };
+
+        var result = await FilePicker.PickAsync(options);
+        if (result is null)
+        {
+            return Result.Fail("No file was selected.");
         }
 
-        sb.AppendLine($"Bedtime Average: {sleeps.GetAverage(s => s.BedtimeRec)}");
-        sb.AppendLine($"Waketime Average: {sleeps.GetAverage(s => s.WaketimeRec)}");
-        sb.AppendLine($"Duration Average: {sleeps.GetAverage(s => s.Duration)}");
-        return sb.ToString();
+        if (string.IsNullOrWhiteSpace(result.FullPath))
+        {
+            return Result.Fail("Selected file path is invalid.");
+        }
+
+        if (!fileSystem.File.Exists(result.FullPath))
+        {
+            return Result.Fail("Selected file does not exist.");
+        }
+
+        if (fileSystem.Path.GetExtension(result.FullPath)?.ToLower() != ".csv")
+        {
+            return Result.Fail("Selected file is not a CSV file.");
+        }
+
+        return Result.Ok(result.FullPath);
     }
 }
