@@ -96,11 +96,10 @@ public class FileService(
             return Result.Fail("Selected file does not exist.");
         }
 
-        if (fileSystem.Path.GetExtension(result.FullPath)?.ToLower() != ".csv")
-        {
-            return Result.Fail("Selected file is not a CSV file.");
-        }
-
-        return Result.Ok(result.FullPath);
+        return IsFileCsv(result.FullPath)
+            ? Result.Ok(result.FullPath)
+            : Result.Fail("Selected file is not a CSV file.");
     }
+
+    private bool IsFileCsv(string filePath) => fileSystem.Path.GetExtension(filePath)?.ToLower() == ".csv";
 }
