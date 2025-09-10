@@ -4,6 +4,7 @@ using RoyAppMaui.Components.Modals;
 using RoyAppMaui.Models;
 
 namespace RoyAppMaui.Services.Impl;
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = "No need to test this service model. There is no logic.")]
 public class CustomDialogService(IDialogService dialogService) : ICustomDialogService
 {
     public async Task<Result<bool>> ShowConfirmClearGridDialogAsync()
