@@ -6,9 +6,14 @@
             <MudStack Row="true">
                 <MudTimePicker
                     @ref="_bedtimepicker"
+                    Adornment="Adornment.End"
+                    AdornmentColor="Color.Tertiary"
+                    AdornmentIcon="@Icons.Material.Filled.Bed"
+                    AnchorOrigin="Origin.CenterLeft"
+                    TransformOrigin="Origin.CenterLeft"
                     AmPm="true"
+                    Elevation="1"
                     Label="Bedtime"
-                    Editable="true"
                     Variant="Variant.Outlined"
                     Time="ItemToModify.Bedtime"
                     TimeChanged="args => OnTimeChange(TimePickers.Bedtime, args)">
@@ -24,9 +29,14 @@
             <MudStack Row="true">
                 <MudTimePicker
                     @ref="_waketimepicker"
+                    Adornment="Adornment.End"
+                    AdornmentColor="Color.Tertiary"
+                    AdornmentIcon="@Icons.Material.Filled.Alarm"
+                    AnchorOrigin="Origin.CenterLeft"
+                    TransformOrigin="Origin.CenterLeft"
                     AmPm="true"
+                    Elevation="1"
                     Label="Waketime"
-                    Editable="true"
                     Variant="Variant.Outlined"
                     Time="ItemToModify.Waketime"
                     TimeChanged="args => OnTimeChange(TimePickers.Waketime, args)">

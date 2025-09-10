@@ -1,6 +1,9 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@SettingsService.IsDarkMode" Theme="@CustomTheme" />
+<MudThemeProvider
+    @ref="@_mudThemeProvider"
+    @bind-IsDarkMode="@SettingsService.IsDarkMode"
+    Theme="@CustomTheme" />
 <MudDialogProvider
     MaxWidth="MaxWidth.ExtraSmall"
     CloseButton="true"
