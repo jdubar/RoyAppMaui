@@ -101,5 +101,5 @@ public class FileService(
             : Result.Fail("Selected file is not a CSV file.");
     }
 
-    private bool IsFileCsv(string filePath) => fileSystem.Path.GetExtension(filePath)?.ToLower() == ".csv";
+    private bool IsFileCsv(string filePath) => fileSystem.Path.GetExtension(filePath)?.ToLower(CultureInfo.CurrentCulture) == ".csv";
 }
