@@ -232,7 +232,7 @@ public class FileServiceTests
         var fileSystem = A.Fake<System.IO.Abstractions.IFileSystem>();
         var filePicker = A.Fake<IFilePicker>();
         var fileSaver = A.Fake<IFileSaver>();
-        A.CallTo(() => filePicker.PickAsync(A<PickOptions>._)).Returns(Task.FromResult<FileResult?>(new FileResult(filePath)));
+        A.CallTo(() => filePicker.PickAsync(A<PickOptions>._)).Returns(new FileResult(filePath));
         var service = new FileService(fileSystem, fileSaver, filePicker);
 
         // Act
@@ -241,5 +241,26 @@ public class FileServiceTests
         // Assert
         Assert.True(actual.IsFailed);
         Assert.Contains("does not exist", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task SelectImportFileAsync_FileIsNotCsv_ReturnsFailure()
+    {
+        // Arrange
+        var filePath = "file.txt";
+        var fileSystem = A.Fake<System.IO.Abstractions.IFileSystem>();
+        A.CallTo(() => fileSystem.File.Exists(filePath)).Returns(true);
+        A.CallTo(() => fileSystem.Path.GetExtension(filePath)).Returns(".txt");
+        var filePicker = A.Fake<IFilePicker>();
+        var fileSaver = A.Fake<IFileSaver>();
+        A.CallTo(() => filePicker.PickAsync(A<PickOptions>._)).Returns(new FileResult(filePath));
+        var service = new FileService(fileSystem, fileSaver, filePicker);
+
+        // Act
+        var actual = await service.SelectImportFileAsync();
+
+        // Assert
+        Assert.True(actual.IsFailed);
+        Assert.Contains("not a CSV", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
     }
 }
