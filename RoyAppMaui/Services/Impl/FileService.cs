@@ -12,8 +12,19 @@ using RoyAppMaui.Types;
 using System.Globalization;
 
 namespace RoyAppMaui.Services.Impl;
-public class FileService(System.IO.Abstractions.IFileSystem fileSystem) : IFileService
+public class FileService(
+    System.IO.Abstractions.IFileSystem fileSystem,
+    IFileSaver fileSaver,
+    IFilePicker filePicker) : IFileService
 {
+    private readonly CancellationTokenSource _cts = new();
+
+    private readonly PickOptions PickOptions = new()
+    {
+        PickerTitle = "Please select an import file",
+        FileTypes = FilePickerTypes.GetFilePickerFileTypes()
+    };
+
     public Result<List<Sleep>> GetSleepDataFromCsv(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath))
@@ -56,7 +67,12 @@ public class FileService(System.IO.Abstractions.IFileSystem fileSystem) : IFileS
         try
         {
             using var stream = new MemoryStream(buffer);
-            var result = await FileSaver.SaveAsync(filePath, stream);
+            var result = await fileSaver.SaveAsync(filePath, stream, _cts.Token);
+            if (result.FilePath is null)
+            {
+                return Result.Fail("user canceled");
+            }
+
             return result.IsSuccessful
                 ? Result.Ok(true)
                 : Result.Fail("Failed to save the file.");
@@ -69,21 +85,10 @@ public class FileService(System.IO.Abstractions.IFileSystem fileSystem) : IFileS
 
     public async Task<Result<string>> SelectImportFileAsync()
     {
-        PickOptions options = new()
-        {
-            PickerTitle = "Please select an import file",
-            FileTypes = FilePickerTypes.GetFilePickerFileTypes()
-        };
-
-        var result = await FilePicker.PickAsync(options);
+        var result = await filePicker.PickAsync(PickOptions);
         if (result is null)
         {
-            return Result.Fail("No file was selected.");
-        }
-
-        if (string.IsNullOrWhiteSpace(result.FullPath))
-        {
-            return Result.Fail("Selected file path is invalid.");
+            return Result.Fail("user canceled");
         }
 
         if (!fileSystem.File.Exists(result.FullPath))

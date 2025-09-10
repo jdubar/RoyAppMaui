@@ -61,6 +61,11 @@ public partial class SleepTable
     private async Task ImportDataAsync()
     {
         var result = await FileService.SelectImportFileAsync();
+        if (result.Errors[0].Message.Contains("user canceled"))
+        {
+            return;
+        }
+
         if (result.IsFailed)
         {
             _ = Snackbar.Add(result.Errors[0].Message, Severity.Error);
@@ -126,6 +131,11 @@ public partial class SleepTable
         var filename = $"RoyApp_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv";
         var data = DataService.GetExportData(_sleeps.AsEnumerable());
         var result = await FileService.SaveBytesToFileAsync(data, filename);
+        if (result.Errors[0].Message.Contains("user canceled"))
+        {
+            return;
+        }
+
         _ = result.IsSuccess
             ? Snackbar.Add("Successfully exported the data to file", Severity.Success)
             : Snackbar.Add("Error saving the file!", Severity.Error);
