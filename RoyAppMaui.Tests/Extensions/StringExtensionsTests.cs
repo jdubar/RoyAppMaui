@@ -15,6 +15,16 @@ public class StringExtensionsTests
         Assert.Equal(expected, actual);
     }
 
+    [Fact]
+    public void ToBytes_ThrowsArgumentNullException_OnNullInput()
+    {
+        // Arrange
+        string? input = null;
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>(() => input!.ToBytes());
+    }
+
     [Theory]
     [InlineData("0830", 8, 30, 0)]
     [InlineData("8:30", 8, 30, 0)]

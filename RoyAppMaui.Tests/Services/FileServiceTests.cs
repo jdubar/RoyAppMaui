@@ -1,7 +1,8 @@
+using CommunityToolkit.Maui.Storage;
+
 using FakeItEasy;
 
 using RoyAppMaui.Extensions;
-using RoyAppMaui.Models;
 using RoyAppMaui.Services.Impl;
 
 using System.IO.Abstractions.TestingHelpers;
@@ -25,7 +26,9 @@ public class FileServiceTests
             { filePath, new MockFileData(fileContent) }
         });
 
-        var service = new FileService(fileSystem);
+        var filePicker = A.Fake<IFilePicker>();
+        var fileSaver = A.Fake<IFileSaver>();
+        var service = new FileService(fileSystem, fileSaver, filePicker);
 
         // Act
         var result = service.GetSleepDataFromCsv(filePath);
@@ -46,14 +49,16 @@ public class FileServiceTests
         // Arrange
         var filePath = "nonexistent.csv";
         var fileSystem = new MockFileSystem();
-        var service = new FileService(fileSystem);
+        var filePicker = A.Fake<IFilePicker>();
+        var fileSaver = A.Fake<IFileSaver>();
+        var service = new FileService(fileSystem, fileSaver, filePicker);
 
         // Act
-        var result = service.GetSleepDataFromCsv(filePath);
+        var actual = service.GetSleepDataFromCsv(filePath);
 
         // Assert
-        Assert.True(result.IsFailed);
-        Assert.Contains("not found", result.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+        Assert.True(actual.IsFailed);
+        Assert.Contains("not found", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -62,14 +67,16 @@ public class FileServiceTests
         // Arrange
         var filePath = string.Empty;
         var fileSystem = new MockFileSystem();
-        var service = new FileService(fileSystem);
+        var filePicker = A.Fake<IFilePicker>();
+        var fileSaver = A.Fake<IFileSaver>();
+        var service = new FileService(fileSystem, fileSaver, filePicker);
 
         // Act
-        var result = service.GetSleepDataFromCsv(filePath);
+        var actual = service.GetSleepDataFromCsv(filePath);
 
         // Assert
-        Assert.True(result.IsFailed);
-        Assert.Contains("null or empty", result.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+        Assert.True(actual.IsFailed);
+        Assert.Contains("null or empty", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -82,14 +89,16 @@ public class FileServiceTests
         {
             { filePath, new MockFileData(fileContent) }
         });
-        var service = new FileService(fileSystem);
+        var filePicker = A.Fake<IFilePicker>();
+        var fileSaver = A.Fake<IFileSaver>();
+        var service = new FileService(fileSystem, fileSaver, filePicker);
 
         // Act
-        var result = service.GetSleepDataFromCsv(filePath);
+        var actual = service.GetSleepDataFromCsv(filePath);
 
         // Assert
-        Assert.True(result.IsFailed);
-        Assert.Contains("CSV parsing error", result.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+        Assert.True(actual.IsFailed);
+        Assert.Contains("CSV parsing error", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -99,78 +108,159 @@ public class FileServiceTests
         var filePath = "anyfile.csv";
         var fileSystem = A.Fake<System.IO.Abstractions.IFileSystem>();
         A.CallTo(() => fileSystem.File.OpenRead(A<string>._)).Throws(new Exception("Something went wrong"));
-
-        var service = new FileService(fileSystem);
+        var filePicker = A.Fake<IFilePicker>();
+        var fileSaver = A.Fake<IFileSaver>();
+        var service = new FileService(fileSystem, fileSaver, filePicker);
 
         // Act
-        var result = service.GetSleepDataFromCsv(filePath);
+        var actual = service.GetSleepDataFromCsv(filePath);
 
         // Assert
-        Assert.True(result.IsFailed);
-        Assert.Contains("unexpected error", result.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+        Assert.True(actual.IsFailed);
+        Assert.Contains("unexpected error", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
-    public void GetExportData_EmptyList_ReturnsHeaderAndAverages()
+    public async Task SaveBytesToFileAsync_SavesFileSuccessfully_ReturnsSuccess()
     {
         // Arrange
+        var filePath = "savedfile.txt";
+        var buffer = new byte[] { 1, 2, 3, 4, 5 };
         var fileSystem = A.Fake<System.IO.Abstractions.IFileSystem>();
-        var service = new FileService(fileSystem);
-        var sleeps = new List<Sleep>();
+        var filePicker = A.Fake<IFilePicker>();
+        var fileSaver = A.Fake<IFileSaver>();
+        A.CallTo(() => fileSaver.SaveAsync(A<string>._, A<Stream>._, A<CancellationToken>._)).Returns(new FileSaverResult(filePath, null));
+        var service = new FileService(fileSystem, fileSaver, filePicker);
 
         // Act
-        var result = service.GetExportData(sleeps);
+        var actual = await service.SaveBytesToFileAsync(buffer, filePath);
 
         // Assert
-        var csv = result;
-        Assert.Contains("Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal)", csv);
-        Assert.Contains("Bedtime Average: 0", csv);
-        Assert.Contains("Waketime Average: 0", csv);
+        Assert.True(actual.IsSuccess);
+        Assert.True(actual.Value);
     }
 
     [Fact]
-    public void GetExportData_SingleSleep_ReturnsCorrectCsv()
+    public async Task SaveBytesToFileAsync_SaveFails_ReturnsFailure()
     {
         // Arrange
-        var fileSystem = A.Fake<System.IO.Abstractions.IFileSystem>();
-        var service = new FileService(fileSystem);
-        var sleep = new Sleep
+        var exception = new Exception()
         {
-            Id = "1",
-            Bedtime = "10:00 PM".ToTimeSpan(),
-            Waketime = "06:00 AM".ToTimeSpan(),
+            Source = "UnitTest",
         };
-        var sleeps = new List<Sleep> { sleep };
+        var filePath = "savedfile.txt";
+        var buffer = new byte[] { 1, 2, 3, 4, 5 };
+        var fileSystem = A.Fake<System.IO.Abstractions.IFileSystem>();
+        var filePicker = A.Fake<IFilePicker>();
+        var fileSaver = A.Fake<IFileSaver>();
+        A.CallTo(() => fileSaver.SaveAsync(A<string>._, A<Stream>._, A<CancellationToken>._)).Returns(new FileSaverResult(null, exception));
+        var service = new FileService(fileSystem, fileSaver, filePicker);
 
         // Act
-        var actual = service.GetExportData(sleeps);
+        var actual = await service.SaveBytesToFileAsync(buffer, filePath);
 
         // Assert
-        Assert.Contains("Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal)", actual);
-        Assert.Contains("1,10:00 PM,22,06:00 AM,6", actual);
-        Assert.Contains("Bedtime Average: 22", actual);
-        Assert.Contains("Waketime Average: 6", actual);
+        Assert.True(actual.IsFailed);
+        Assert.Contains("user canceled", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
-    public void GetExportData_MultipleSleeps_ReturnsCorrectAverages()
+    public async Task SaveBytesToFileAsync_UnexpectedException_ReturnsFailure()
     {
         // Arrange
+        var filePath = "savedfile.txt";
+        var buffer = new byte[] { 1, 2, 3, 4, 5 };
         var fileSystem = A.Fake<System.IO.Abstractions.IFileSystem>();
-        var service = new FileService(fileSystem);
-        var sleeps = new List<Sleep>
-        {
-            new() { Id = "1", Bedtime = "10:00 PM".ToTimeSpan(), Waketime = "06:00 AM".ToTimeSpan() },
-            new() { Id = "2", Bedtime = "11:00 PM".ToTimeSpan(), Waketime = "07:00 AM".ToTimeSpan() }
-        };
+        var filePicker = A.Fake<IFilePicker>();
+        var fileSaver = A.Fake<IFileSaver>();
+        A.CallTo(() => fileSaver.SaveAsync(A<string>._, A<Stream>._, A<CancellationToken>._)).Throws(new FileSaveException("Oh no, my token ring!"));
+        var service = new FileService(fileSystem, fileSaver, filePicker);
 
         // Act
-        var actual = service.GetExportData(sleeps);
+        var actual = await service.SaveBytesToFileAsync(buffer, filePath);
 
         // Assert
-        Assert.Contains("1,10:00 PM,22,06:00 AM,6", actual);
-        Assert.Contains("2,11:00 PM,23,07:00 AM,7", actual);
-        Assert.Contains("Bedtime Average: 22.5", actual);
-        Assert.Contains("Waketime Average: 6.5", actual);
+        Assert.True(actual.IsFailed);
+        Assert.Contains("token ring", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task SelectImportFileAsync_UserSelectsFile_ReturnsFilePath()
+    {
+        // Arrange
+        var expectedFilePath = "importedfile.csv";
+        var fileSystem = A.Fake<System.IO.Abstractions.IFileSystem>();
+        A.CallTo(() => fileSystem.File.Exists(expectedFilePath)).Returns(true);
+        A.CallTo(() => fileSystem.Path.GetExtension(expectedFilePath)).Returns(".csv");
+        var filePicker = A.Fake<IFilePicker>();
+        var fileSaver = A.Fake<IFileSaver>();
+        A.CallTo(() => filePicker.PickAsync(A<PickOptions>._)).Returns(new FileResult(expectedFilePath));
+        var service = new FileService(fileSystem, fileSaver, filePicker);
+
+        // Act
+        var actual = await service.SelectImportFileAsync();
+
+        // Assert
+        Assert.True(actual.IsSuccess);
+        Assert.Equal(expectedFilePath, actual.Value);
+    }
+
+    [Fact]
+    public async Task SelectImportFileAsync_UserCancels_ReturnsFailure()
+    {
+        // Arrange
+        FileResult? result = null;
+        var fileSystem = A.Fake<System.IO.Abstractions.IFileSystem>();
+        var filePicker = A.Fake<IFilePicker>();
+        var fileSaver = A.Fake<IFileSaver>();
+        A.CallTo(() => filePicker.PickAsync(A<PickOptions>._)).Returns(result);
+        var service = new FileService(fileSystem, fileSaver, filePicker);
+
+        // Act
+        var actual = await service.SelectImportFileAsync();
+
+        // Assert
+        Assert.True(actual.IsFailed);
+        Assert.Contains("user canceled", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task SelectImportFileAsync_FileDoesNotExist_ReturnsFailure()
+    {
+        // Arrange
+        var filePath = "nonexistentfile.csv";
+        var fileSystem = A.Fake<System.IO.Abstractions.IFileSystem>();
+        var filePicker = A.Fake<IFilePicker>();
+        var fileSaver = A.Fake<IFileSaver>();
+        A.CallTo(() => filePicker.PickAsync(A<PickOptions>._)).Returns(new FileResult(filePath));
+        var service = new FileService(fileSystem, fileSaver, filePicker);
+
+        // Act
+        var actual = await service.SelectImportFileAsync();
+
+        // Assert
+        Assert.True(actual.IsFailed);
+        Assert.Contains("does not exist", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task SelectImportFileAsync_FileIsNotCsv_ReturnsFailure()
+    {
+        // Arrange
+        var filePath = "file.txt";
+        var fileSystem = A.Fake<System.IO.Abstractions.IFileSystem>();
+        A.CallTo(() => fileSystem.File.Exists(filePath)).Returns(true);
+        A.CallTo(() => fileSystem.Path.GetExtension(filePath)).Returns(".txt");
+        var filePicker = A.Fake<IFilePicker>();
+        var fileSaver = A.Fake<IFileSaver>();
+        A.CallTo(() => filePicker.PickAsync(A<PickOptions>._)).Returns(new FileResult(filePath));
+        var service = new FileService(fileSystem, fileSaver, filePicker);
+
+        // Act
+        var actual = await service.SelectImportFileAsync();
+
+        // Assert
+        Assert.True(actual.IsFailed);
+        Assert.Contains("not a CSV", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
     }
 }

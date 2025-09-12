@@ -6,5 +6,6 @@ namespace RoyAppMaui.Services;
 public interface IFileService
 {
     Result<List<Sleep>> GetSleepDataFromCsv(string filePath);
-    string GetExportData(IEnumerable<Sleep> sleeps);
+    Task<Result<bool>> SaveBytesToFileAsync(byte[] buffer, string filePath);
+    Task<Result<string>> SelectImportFileAsync();
 }

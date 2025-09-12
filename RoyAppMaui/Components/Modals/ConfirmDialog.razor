@@ -1,9 +1,9 @@
 ﻿<MudDialog>
     <DialogContent>
-        <MudText>@ContentText</MudText>
+        <MudText>@DialogText</MudText>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="Submit">Delete</MudButton>
+        <MudButton Color="@ButtonColor" Variant="Variant.Filled" OnClick="Submit">@ButtonText</MudButton>
     </DialogActions>
 </MudDialog>

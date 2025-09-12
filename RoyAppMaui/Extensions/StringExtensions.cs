@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text;
 
 namespace RoyAppMaui.Extensions;
 
@@ -10,7 +11,18 @@ public static class StringExtensions
     /// <summary>
     /// Converts the string to a UTF-8 byte array.
     /// </summary>
-    public static byte[] ToBytes(this string str) => System.Text.Encoding.UTF8.GetBytes(str);
+    /// <param name="str"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static byte[] ToBytes(this string str)
+    {
+        if (str is null)
+        {
+            throw new ArgumentNullException(nameof(str), "Input string cannot be null.");
+        }
+
+        return Encoding.UTF8.GetBytes(str);
+    }
 
     /// <summary>
     /// Converts a string to a <see cref="TimeSpan"/> using multiple accepted formats.

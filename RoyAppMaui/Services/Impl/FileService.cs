@@ -1,18 +1,30 @@
-﻿using CsvHelper;
+﻿using CommunityToolkit.Maui.Storage;
+
+using CsvHelper;
 using CsvHelper.Configuration;
 
 using FluentResults;
 
 using RoyAppMaui.ClassMaps;
-using RoyAppMaui.Extensions;
 using RoyAppMaui.Models;
+using RoyAppMaui.Types;
 
 using System.Globalization;
-using System.Text;
 
 namespace RoyAppMaui.Services.Impl;
-public class FileService(System.IO.Abstractions.IFileSystem fileSystem) : IFileService
+public class FileService(
+    System.IO.Abstractions.IFileSystem fileSystem,
+    IFileSaver fileSaver,
+    IFilePicker filePicker) : IFileService
 {
+    private readonly CancellationTokenSource _cts = new();
+
+    private readonly PickOptions PickOptions = new()
+    {
+        PickerTitle = "Please select an import file",
+        FileTypes = FilePickerTypes.GetFilePickerFileTypes()
+    };
+
     public Result<List<Sleep>> GetSleepDataFromCsv(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath))
@@ -50,20 +62,44 @@ public class FileService(System.IO.Abstractions.IFileSystem fileSystem) : IFileS
         }
     }
 
-    public string GetExportData(IEnumerable<Sleep> sleeps)
+    public async Task<Result<bool>> SaveBytesToFileAsync(byte[] buffer, string filePath)
     {
-        const string header = "Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal),Duration";
-
-        var sb = new StringBuilder();
-        sb.AppendLine(header);
-        foreach (var sleep in sleeps)
+        try
         {
-            sb.AppendLine($"{sleep.Id},{sleep.BedtimeDisplay},{sleep.BedtimeRec},{sleep.WaketimeDisplay},{sleep.WaketimeRec},{sleep.Duration}");
+            using var stream = new MemoryStream(buffer);
+            var result = await fileSaver.SaveAsync(filePath, stream, _cts.Token);
+            if (result.FilePath is null)
+            {
+                return Result.Fail("user canceled");
+            }
+
+            return result.IsSuccessful
+                ? Result.Ok(true)
+                : Result.Fail("Failed to save the file.");
+        }
+        catch (FileSaveException ex)
+        {
+            return Result.Fail($"File save error: {ex.Message}");
+        }
+    }
+
+    public async Task<Result<string>> SelectImportFileAsync()
+    {
+        var result = await filePicker.PickAsync(PickOptions);
+        if (result is null)
+        {
+            return Result.Fail("user canceled");
         }
 
-        sb.AppendLine($"Bedtime Average: {sleeps.GetAverage(s => s.BedtimeRec)}");
-        sb.AppendLine($"Waketime Average: {sleeps.GetAverage(s => s.WaketimeRec)}");
-        sb.AppendLine($"Duration Average: {sleeps.GetAverage(s => s.Duration)}");
-        return sb.ToString();
+        if (!fileSystem.File.Exists(result.FullPath))
+        {
+            return Result.Fail("Selected file does not exist.");
+        }
+
+        return IsFileCsv(result.FullPath)
+            ? Result.Ok(result.FullPath)
+            : Result.Fail("Selected file is not a CSV file.");
     }
+
+    private bool IsFileCsv(string filePath) => fileSystem.Path.GetExtension(filePath)?.ToLower(CultureInfo.CurrentCulture) == ".csv";
 }
