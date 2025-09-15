@@ -34,16 +34,18 @@ public partial class MainLayout
 
     private void OnImportDataClick() => ImportExportService.RequestImport();
 
-    private Task OnSystemPreferenceChanged(bool newValue)
+    private async Task OnSystemPreferenceChanged(bool newValue)
     {
         SettingsService.IsDarkMode = newValue;
+        await SetCookieAsync();
         StateHasChanged();
-        return Task.CompletedTask;
     }
 
     private async Task ThemeToggleAsync()
     {
         SettingsService.IsDarkMode = !SettingsService.IsDarkMode;
-        await JS.InvokeVoidAsync("setIsDarkModeCookie", SettingsService.IsDarkMode);
+        await SetCookieAsync();
     }
+
+    private async Task SetCookieAsync() => await JS.InvokeVoidAsync("setIsDarkModeCookie", SettingsService.IsDarkMode);
 }
