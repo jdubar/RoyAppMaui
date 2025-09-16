@@ -10,12 +10,14 @@ public class Sleep
     /// <summary>
     /// Bedtime as a decimal hour value (rounded to 2 decimals).
     /// </summary>
-    public decimal BedtimeRec => Bedtime.ToHoursAsDecimal();
+    public decimal BedtimeAsDecimal => Bedtime.ToHoursAsDecimal();
+    public string BedtimeAsDecimalDisplay => BedtimeAsDecimal.ToFormattedString();
 
     /// <summary>
     /// Waketime as a decimal hour value (rounded to 2 decimals).
     /// </summary>
-    public decimal WaketimeRec => Waketime.ToHoursAsDecimal();
+    public decimal WaketimeAsDecimal => Waketime.ToHoursAsDecimal();
+    public string WaketimeAsDecimalDisplay => WaketimeAsDecimal.ToFormattedString();
 
     /// <summary>
     /// Bedtime as a formatted string (e.g., "10:00 PM").
@@ -31,6 +33,7 @@ public class Sleep
     /// The duration of sleep in hours, calculated using TimeSpan for accuracy.
     /// </summary>
     public decimal Duration => GetSleepDuration(Bedtime, Waketime);
+    public string DurationDisplay => Duration.ToFormattedString();
 
     private static decimal GetSleepDuration(TimeSpan bedtime, TimeSpan waketime)
     {

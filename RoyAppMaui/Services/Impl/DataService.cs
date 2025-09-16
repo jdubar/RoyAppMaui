@@ -17,12 +17,12 @@ public class DataService : IDataService
         {
             foreach (var sleep in sleeps)
             {
-                sb.AppendLine($"{sleep.Id},{sleep.BedtimeDisplay},{sleep.BedtimeRec},{sleep.WaketimeDisplay},{sleep.WaketimeRec},{sleep.Duration}");
+                sb.AppendLine($"{sleep.Id},{sleep.BedtimeDisplay},{sleep.BedtimeAsDecimalDisplay},{sleep.WaketimeDisplay},{sleep.WaketimeAsDecimalDisplay},{sleep.DurationDisplay}");
             }
         }
 
-        sb.AppendLine($"Bedtime Average: {sleeps.GetAverage(s => s.BedtimeRec)}");
-        sb.AppendLine($"Waketime Average: {sleeps.GetAverage(s => s.WaketimeRec)}");
+        sb.AppendLine($"Bedtime Average: {sleeps.GetAverage(s => s.BedtimeAsDecimal)}");
+        sb.AppendLine($"Waketime Average: {sleeps.GetAverage(s => s.WaketimeAsDecimal)}");
         sb.AppendLine($"Duration Average: {sleeps.GetAverage(s => s.Duration)}");
         return sb.ToString().ToBytes();
     }

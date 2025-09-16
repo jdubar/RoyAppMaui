@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using RoyAppMaui.Components.Controls
 
 <MudDataGrid
     T="Sleep"
@@ -9,16 +10,29 @@
     LoadingProgressColor="@Color.Primary"
     RowsPerPage="SettingsService.RowsPerPage"
     RowsPerPageChanged="OnRowsPerPageChanged"
+    SortMode="SortMode.None"
     Square="true"
     Striped="true">
     <Columns>
-        <PropertyColumn Property="x => x.Id" />
-        <PropertyColumn Property="x => x.BedtimeDisplay" Title="Bedtime" />
-        <PropertyColumn Property="x => x.BedtimeRec" Editable="false" Title="(As Decimal)" />
-        <PropertyColumn Property="x => x.WaketimeDisplay" Title="Waketime" />
-        <PropertyColumn Property="x => x.WaketimeRec" Editable="false" Title="(As Decimal)" />
-        <PropertyColumn Property="x => x.Duration" Editable="false" />
-        <TemplateColumn Filterable="false" Sortable="false">
+        <PropertyColumn Property="x => x.Id" HeaderStyle="min-width: 390px" />
+        <TemplateColumn Title="Bedtime" CellClass="custom-column-size" HeaderStyle="justify-items: center">
+            <CellTemplate>
+                <MudStack Row="true" StretchItems="StretchItems.End" AlignItems="AlignItems.Center" Spacing="1">
+                    <MudText>@context.Item.BedtimeDisplay</MudText>
+                    <TimeChip Time="@context.Item.BedtimeAsDecimal" />
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn Title="Waketime" CellClass="custom-column-size" HeaderStyle="justify-items: center">
+            <CellTemplate>
+                <MudStack Row="true" StretchItems="StretchItems.End" AlignItems="AlignItems.Center" Spacing="1">
+                    <MudText>@context.Item.WaketimeDisplay</MudText>
+                    <TimeChip Time="@context.Item.WaketimeAsDecimal" />
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+        <PropertyColumn Property="x => x.DurationDisplay" Title="Duration" CellClass="duration-column" HeaderStyle="justify-items: right" />
+        <TemplateColumn Filterable="false" CellClass="action-column">
             <CellTemplate>
                 <MudStack Row="true" Class="d-flex justify-center" Spacing="3">
                     <MudTooltip
@@ -61,8 +75,8 @@
 
     <MudAppBar Bottom="true" Fixed="true" Elevation="1" Style="height: 90px;" Color="Color.Transparent">
         <MudStack Class="mt-6" Row="true" AlignItems="AlignItems.Center">
-            <MudField AdornmentIcon="@Icons.Material.Filled.Bed" Adornment="Adornment.Start" AdornmentColor="Color.Tertiary" Label="Bedtime Average" Variant="Variant.Outlined" Style="width: 150px">@BedtimeAvg</MudField>
-            <MudField AdornmentIcon="@Icons.Material.Filled.Alarm" Adornment="Adornment.Start" AdornmentColor="Color.Tertiary" Label="Waketime Average" Variant="Variant.Outlined" Style="width: 150px">@WaketimeAvg</MudField>
+            <MudField AdornmentIcon="@Icons.Material.Filled.Bed" Adornment="Adornment.Start" AdornmentColor="Color.Tertiary" Label="Bedtime Average" Variant="Variant.Outlined" Style="width: 150px">@BedtimeAverage</MudField>
+            <MudField AdornmentIcon="@Icons.Material.Filled.Alarm" Adornment="Adornment.Start" AdornmentColor="Color.Tertiary" Label="Waketime Average" Variant="Variant.Outlined" Style="width: 150px">@WaketimeAverage</MudField>
         </MudStack>
         <MudButton Class="ml-5 mt-7" OnClick="@ConfirmClearTableAsync" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.PlaylistRemove" Color="Color.Primary">Clear Data</MudButton>
         <MudSpacer />
@@ -85,8 +99,8 @@
             <MudText Typo="Typo.h6">Averages</MudText>
         </MudDrawerHeader>
         <MudStack Row="true" Class="mx-3 mb-6" AlignItems="AlignItems.Center">
-            <MudField AdornmentIcon="@Icons.Material.Filled.Bed" Adornment="Adornment.Start" AdornmentColor="Color.Tertiary" Label="Bedtime Average" Variant="Variant.Outlined" Style="width: 150px">@BedtimeAvg</MudField>
-            <MudField AdornmentIcon="@Icons.Material.Filled.Alarm" Adornment="Adornment.Start" AdornmentColor="Color.Tertiary" Label="Waketime Average" Variant="Variant.Outlined" Style="width: 150px">@WaketimeAvg</MudField>
+            <MudField AdornmentIcon="@Icons.Material.Filled.Bed" Adornment="Adornment.Start" AdornmentColor="Color.Tertiary" Label="Bedtime Average" Variant="Variant.Outlined" Style="width: 150px">@BedtimeAverage</MudField>
+            <MudField AdornmentIcon="@Icons.Material.Filled.Alarm" Adornment="Adornment.Start" AdornmentColor="Color.Tertiary" Label="Waketime Average" Variant="Variant.Outlined" Style="width: 150px">@WaketimeAverage</MudField>
         </MudStack>
     </MudDrawer>
 </MudHidden>

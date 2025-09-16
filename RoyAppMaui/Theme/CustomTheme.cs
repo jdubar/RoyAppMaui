@@ -6,10 +6,12 @@ public class CustomTheme : MudTheme
     {
         PaletteLight = new PaletteLight()
         {
+            Dark = "#0000001e",
             Tertiary = "#594ae2",
         };
         PaletteDark = new PaletteDark()
         {
+            Dark = "#27272f",
             Tertiary = "#ffffffb2",
         };
     }

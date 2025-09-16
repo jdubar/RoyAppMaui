@@ -134,3 +134,23 @@ body.dark-mode .loading-overlay {
     align-items: center;
     height: calc(100vh - 19rem);
 }
+
+.custom-column-size {
+    justify-items: end;
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+
+.action-column {
+    justify-items: end;
+    width: 150px;
+}
+
+.duration-column {
+    width: 150px !important;
+    text-align: right !important;
+}
+
+.duration-header {
+    text-align: right !important;
+}

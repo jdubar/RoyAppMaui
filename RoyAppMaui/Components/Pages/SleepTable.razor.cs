@@ -19,8 +19,10 @@ public partial class SleepTable
     private bool _isLoading;
     private bool _drawerOpen;
 
-    public decimal BedtimeAvg { get; private set; }
-    public decimal WaketimeAvg { get; private set; }
+    const string _zeroTimeString = "0";
+
+    public string BedtimeAverage { get; private set; } = _zeroTimeString;
+    public string WaketimeAverage { get; private set; } = _zeroTimeString;
 
     protected override void OnInitialized()
     {
@@ -156,8 +158,8 @@ public partial class SleepTable
 
     private void ResetAverages()
     {
-        BedtimeAvg = 0;
-        WaketimeAvg = 0;
+        BedtimeAverage = _zeroTimeString;
+        WaketimeAverage = _zeroTimeString;
     }
 
     private void SetAveragesInView()
@@ -168,7 +170,7 @@ public partial class SleepTable
             return;
         }
 
-        BedtimeAvg = _sleeps.GetAverage(s => s.BedtimeRec);
-        WaketimeAvg = _sleeps.GetAverage(s => s.WaketimeRec);
+        BedtimeAverage = _sleeps.GetAverage(s => s.BedtimeAsDecimal).ToFormattedString();
+        WaketimeAverage = _sleeps.GetAverage(s => s.WaketimeAsDecimal).ToFormattedString();
     }
 }
