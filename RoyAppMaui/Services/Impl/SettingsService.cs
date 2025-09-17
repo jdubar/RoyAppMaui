@@ -6,13 +6,25 @@ internal class SettingsService(IPreferences settings) : ISettingsService
 
     public bool IsDarkMode
     {
-        get => Settings.Get("IsDarkMode", false);
-        set => Settings.Set("IsDarkMode", value);
+        get => Settings.Get(nameof(IsDarkMode), false);
+        set => Settings.Set(nameof(IsDarkMode), value);
     }
 
     public int RowsPerPage
     {
-        get => Settings.Get("RowsPerPage", 25);
-        set => Settings.Set("RowsPerPage", value);
+        get => Settings.Get(nameof(RowsPerPage), 25);
+        set => Settings.Set(nameof(RowsPerPage), value);
+    }
+
+    public double WindowHeight
+    {
+        get => Settings.Get(nameof(WindowHeight), 900.0);
+        set => Settings.Set(nameof(WindowHeight), value);
+    }
+
+    public double WindowWidth
+    {
+        get => Settings.Get(nameof(WindowWidth), 1200.0);
+        set => Settings.Set(nameof(WindowWidth), value);
     }
 }

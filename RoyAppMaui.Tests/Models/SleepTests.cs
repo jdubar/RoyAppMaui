@@ -10,7 +10,7 @@ public class SleepTests
         var sleep = new Sleep { Bedtime = new TimeSpan(22, 30, 0) };
 
         // Act & Assert
-        Assert.Equal(22.5m, sleep.BedtimeRec);
+        Assert.Equal(22.5m, sleep.BedtimeAsDecimal);
     }
 
     [Fact]
@@ -20,7 +20,7 @@ public class SleepTests
         var sleep = new Sleep { Waketime = new TimeSpan(6, 15, 0) };
 
         // Act & Assert
-        Assert.Equal(6.25m, sleep.WaketimeRec);
+        Assert.Equal(6.25m, sleep.WaketimeAsDecimal);
     }
 
     [Fact]

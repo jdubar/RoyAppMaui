@@ -1,0 +1,29 @@
+﻿<MudTimePicker @ref="_sleepTimePicker"
+               Adornment="Adornment.Start"
+               AdornmentColor="Color.Tertiary"
+               AdornmentIcon="@Icon"
+               AnchorOrigin="Origin.CenterLeft"
+               TransformOrigin="Origin.CenterLeft"
+               AmPm="true"
+               Elevation="1"
+               Label="@Label"
+               Variant="Variant.Outlined"
+               Time="@SleepTime"
+               TimeChanged="@HandleTimeChange">
+    <PickerActions>
+        <MudButton Class="mr-auto align-self-start"
+                   OnClick="@(() => _sleepTimePicker.ClearAsync())"
+                   Variant="Variant.Filled">
+            Clear
+        </MudButton>
+        <MudButton OnClick="@(() => _sleepTimePicker.CloseAsync(false))"
+                   Variant="Variant.Filled">
+            Cancel
+        </MudButton>
+        <MudButton Color="Color.Primary"
+                   OnClick="@(() => _sleepTimePicker.CloseAsync())"
+                   Variant="Variant.Filled">
+            OK
+        </MudButton>
+    </PickerActions>
+</MudTimePicker>

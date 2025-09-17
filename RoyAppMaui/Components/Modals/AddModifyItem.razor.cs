@@ -9,8 +9,6 @@ public partial class AddModifyItem
     [Parameter] public Sleep ItemToModify { get; set; } = new();
 
     private MudForm _itemForm = new();
-    private MudTimePicker _bedtimepicker = default!;
-    private MudTimePicker _waketimepicker = default!;
 
     private void Cancel() => MudDialog.Cancel();
 

@@ -1,42 +1,26 @@
-﻿<MudDialog>
+﻿@using RoyAppMaui.Components.Controls
+
+<MudDialog>
     <DialogContent>
         <MudForm @ref="_itemForm">
             <MudTextField @bind-Value="@ItemToModify.Id" Label="Id" Variant="Variant.Outlined" Required RequiredError="An Id must be supplied!" />
 
             <MudStack Row="true">
-                <MudTimePicker
-                    @ref="_bedtimepicker"
-                    AmPm="true"
+                <TimePicker
+                    Icon="@Icons.Material.Filled.Bed"
                     Label="Bedtime"
-                    Editable="true"
-                    Variant="Variant.Outlined"
-                    Time="ItemToModify.Bedtime"
-                    TimeChanged="args => OnTimeChange(TimePickers.Bedtime, args)">
-                    <PickerActions>
-                        <MudButton Class="mr-auto align-self-start" OnClick="@(() => _bedtimepicker.ClearAsync())">Clear</MudButton>
-                        <MudButton OnClick="@(() => _bedtimepicker.CloseAsync(false))">Cancel</MudButton>
-                        <MudButton Color="Color.Primary" OnClick="@(() => _bedtimepicker.CloseAsync())">OK</MudButton>
-                    </PickerActions>
-                </MudTimePicker>
-                <MudField Class="mud-field-decimal-display" Label="Decimal" Variant="Variant.Outlined">@ItemToModify.BedtimeRec</MudField>
+                    SleepTime="ItemToModify.Bedtime"
+                    SleepTimeChanged="args => OnTimeChange(TimePickers.Bedtime, args)" />
+                <MudField Class="mud-field-decimal-display" Label="Decimal" Variant="Variant.Outlined">@ItemToModify.BedtimeAsDecimalDisplay</MudField>
             </MudStack>
 
             <MudStack Row="true">
-                <MudTimePicker
-                    @ref="_waketimepicker"
-                    AmPm="true"
+                <TimePicker
+                    Icon="@Icons.Material.Filled.Alarm"
                     Label="Waketime"
-                    Editable="true"
-                    Variant="Variant.Outlined"
-                    Time="ItemToModify.Waketime"
-                    TimeChanged="args => OnTimeChange(TimePickers.Waketime, args)">
-                    <PickerActions>
-                        <MudButton Class="mr-auto align-self-start" OnClick="@(() => _waketimepicker.ClearAsync())">Clear</MudButton>
-                        <MudButton OnClick="@(() => _waketimepicker.CloseAsync(false))">Cancel</MudButton>
-                        <MudButton Color="Color.Primary" OnClick="@(() => _waketimepicker.CloseAsync())">OK</MudButton>
-                    </PickerActions>
-                </MudTimePicker>
-                <MudField Class="mud-field-decimal-display" Label="Decimal" Variant="Variant.Outlined">@ItemToModify.WaketimeRec</MudField>
+                    SleepTime="ItemToModify.Waketime"
+                    SleepTimeChanged="args => OnTimeChange(TimePickers.Waketime, args)" />
+                <MudField Class="mud-field-decimal-display" Label="Decimal" Variant="Variant.Outlined">@ItemToModify.WaketimeAsDecimalDisplay</MudField>
             </MudStack>
         </MudForm>
     </DialogContent>

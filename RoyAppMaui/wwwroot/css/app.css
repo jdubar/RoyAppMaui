@@ -59,6 +59,11 @@
     text-align: center !important;
 }
 
+.mud-field-average-display {
+    width: 110px !important;
+    text-align: center !important;
+}
+
 .fab-fixed-position {
     position: fixed !important;
     bottom: 15px !important;
@@ -117,4 +122,35 @@ body.dark-mode .loading-overlay {
     align-items: center;
     font-size: 25pt;
     font-family: 'OpenSansRegular', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.mud-table-container {
+    height: calc(100vh - 13rem);
+}
+
+.nocontent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 19rem);
+}
+
+.custom-column-size {
+    justify-items: end;
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+
+.action-column {
+    justify-items: end;
+    width: 150px;
+}
+
+.duration-column {
+    width: 150px !important;
+    text-align: right !important;
+}
+
+.duration-header {
+    text-align: right !important;
 }

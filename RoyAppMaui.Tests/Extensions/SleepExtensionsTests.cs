@@ -22,7 +22,7 @@ public class SleepExtensionsTests
         var sleeps = new List<Sleep>();
 
         // Act
-        var actual = sleeps.GetAverage(s => s.BedtimeRec);
+        var actual = sleeps.GetAverage(s => s.BedtimeAsDecimal);
 
         // Assert
         Assert.Equal(expected, actual);
@@ -36,7 +36,7 @@ public class SleepExtensionsTests
         List<Sleep>? sleeps = null;
 
         // Act
-        var actual = sleeps!.GetAverage(s => s.BedtimeRec);
+        var actual = sleeps!.GetAverage(s => s.BedtimeAsDecimal);
 
         // Assert
         Assert.Equal(expected, actual);
@@ -50,7 +50,7 @@ public class SleepExtensionsTests
                 new() { Bedtime = new TimeSpan(2, 0, 0) },
                 new() { Bedtime = new TimeSpan(3, 0, 0) }
             },
-            s => s.BedtimeRec,
+            s => s.BedtimeAsDecimal,
             2.5m
         },
         {
@@ -61,7 +61,7 @@ public class SleepExtensionsTests
                 new() { Waketime = new TimeSpan(6, 0, 0) },
                 new() { Waketime = new TimeSpan(6, 0, 0) }
             },
-            s => s.WaketimeRec,
+            s => s.WaketimeAsDecimal,
             6m
         }
     };
