@@ -31,8 +31,8 @@
                 </MudStack>
             </CellTemplate>
         </TemplateColumn>
-        <PropertyColumn Property="x => x.DurationDisplay" Title="Duration" CellClass="duration-column" HeaderStyle="justify-items: right" />
-        <TemplateColumn Filterable="false" CellClass="action-column">
+        <PropertyColumn Property="x => x.DurationDisplay" Title="Duration" CellClass="@GetDurationColumnClass()" HeaderStyle="justify-items: right" />
+        <TemplateColumn Filterable="false" CellClass="@GetActionColumnClass()">
             <CellTemplate>
                 <MudStack Row="true" Class="d-flex justify-center" Spacing="3">
                     <MudTooltip

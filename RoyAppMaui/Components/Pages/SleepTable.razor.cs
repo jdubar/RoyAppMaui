@@ -60,6 +60,24 @@ public partial class SleepTable
         ResetAverages();
     }
 
+    private static string GetDurationColumnClass()
+    {
+#if WINDOWS
+        return "duration-column";
+#else
+        return string.Empty;
+#endif
+    }
+
+    private static string GetActionColumnClass()
+    {
+#if WINDOWS
+        return "action-column";
+#else
+        return string.Empty;
+#endif
+    }
+
     private async Task ImportDataAsync()
     {
         var result = await FileService.SelectImportFileAsync();
