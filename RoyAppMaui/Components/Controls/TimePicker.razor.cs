@@ -1,4 +1,5 @@
 ﻿namespace RoyAppMaui.Components.Controls;
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage(Justification = "We will not test the view code behind. There's no logic to test.")]
 public partial class TimePicker
 {
     [Parameter] public string Icon { get; set; } = Icons.Material.Filled.AccessTime;
