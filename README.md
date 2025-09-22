@@ -5,7 +5,7 @@
 
 A homemade app made for my wife with ❤️
 
-This app will take a bedtime and waketime, display its decimal value and calculate the duration and bedtime/waketime averages.
+This app will prompt the user for an Id `string`, a bedtime and waketime `TimeSpan`, display each as a `decimal` and calculate the duration `decimal` and bedtime/waketime averages `decimal` in an easy-to-use, paginated data grid.
 
 ### Features
 - Import/export via csv file
