@@ -15,15 +15,7 @@ public static class SleepExtensions
     /// <param name="selector">A function to select the decimal value from each Sleep.</param>
     /// <returns>The average value, rounded to 2 decimals, or 0 if the collection is null or empty.</returns>
     public static decimal GetAverage(this IEnumerable<Sleep> sleeps, Func<Sleep, decimal> selector)
-    {
-        if (sleeps is null)
-        {
-            return 0m;
-        }
-
-        var count = sleeps.Count();
-        return count == 0
+        => sleeps is null || !sleeps.Any()
             ? 0m
-            : decimal.Round(sleeps.Sum(selector) / count, 2);
-    }
+            : decimal.Round(sleeps.Average(selector), 2);
 }
