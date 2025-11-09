@@ -21,16 +21,9 @@ public static class SleepExtensions
             return 0m;
         }
 
-        var sum = 0m;
-        var count = 0;
-        foreach (var sleep in sleeps)
-        {
-            sum += selector(sleep);
-            count++;
-        }
-
+        var count = sleeps.Count();
         return count == 0
             ? 0m
-            : decimal.Round(sum / count, 2);
+            : decimal.Round(sleeps.Sum(selector) / count, 2);
     }
 }

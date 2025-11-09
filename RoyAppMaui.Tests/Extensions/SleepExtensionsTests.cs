@@ -61,6 +61,16 @@ public class SleepExtensionsTests
             ],
             s => s.WaketimeAsDecimal,
             6m
+        },
+        {
+            [
+                new() { Waketime = new TimeSpan(2, 15, 0) },
+                new() { Waketime = new TimeSpan(3, 30, 0) },
+                new() { Waketime = new TimeSpan(4, 45, 0) },
+                new() { Waketime = new TimeSpan(5, 50, 0) }
+            ],
+            s => s.WaketimeAsDecimal,
+            4.08m
         }
     };
 
