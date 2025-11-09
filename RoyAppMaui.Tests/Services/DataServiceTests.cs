@@ -1,10 +1,9 @@
 ﻿using RoyAppMaui.Extensions;
 using RoyAppMaui.Models;
-using RoyAppMaui.Services.Impl;
 
 using System.Text;
 
-namespace RoyAppMaui.Tests.Services;
+namespace RoyAppMaui.Services.Impl.Tests;
 public class DataServiceTests
 {
     [Fact]
@@ -19,9 +18,13 @@ public class DataServiceTests
 
         // Assert
         var actual = Encoding.UTF8.GetString(result);
-        Assert.Contains("Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal)", actual);
-        Assert.Contains("Bedtime Average: 0", actual);
-        Assert.Contains("Waketime Average: 0", actual);
+        Assert.Equal("""
+            Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal),Duration
+            Bedtime Average: 0
+            Waketime Average: 0
+            Duration Average: 0
+
+            """, actual);
     }
 
     [Fact]
@@ -42,10 +45,14 @@ public class DataServiceTests
 
         // Assert
         var actual = Encoding.UTF8.GetString(result);
-        Assert.Contains("Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal)", actual);
-        Assert.Contains("1,10:00 PM,22.00,06:00 AM,06.00", actual);
-        Assert.Contains("Bedtime Average: 22", actual);
-        Assert.Contains("Waketime Average: 6", actual);
+        Assert.Equal("""
+            Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal),Duration
+            1,10:00 PM,22.00,06:00 AM,06.00,08.00
+            Bedtime Average: 22
+            Waketime Average: 6
+            Duration Average: 8
+
+            """, actual);
     }
 
     [Fact]
@@ -64,9 +71,14 @@ public class DataServiceTests
 
         // Assert
         var actual = Encoding.UTF8.GetString(result);
-        Assert.Contains("1,10:00 PM,22.00,06:00 AM,06.00", actual);
-        Assert.Contains("2,11:00 PM,23.00,07:00 AM,07.00", actual);
-        Assert.Contains("Bedtime Average: 22.5", actual);
-        Assert.Contains("Waketime Average: 6.5", actual);
+        Assert.Equal("""
+            Id,Bedtime,Bedtime (as decimal),Waketime,Waketime (as decimal),Duration
+            1,10:00 PM,22.00,06:00 AM,06.00,08.00
+            2,11:00 PM,23.00,07:00 AM,07.00,08.00
+            Bedtime Average: 22.5
+            Waketime Average: 6.5
+            Duration Average: 8
+
+            """, actual);
     }
 }

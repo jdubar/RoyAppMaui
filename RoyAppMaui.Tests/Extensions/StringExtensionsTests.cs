@@ -21,8 +21,12 @@ public class StringExtensionsTests
         // Arrange
         string? input = null;
 
-        // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => input!.ToBytes());
+        // Act
+        byte[] action() => input!.ToBytes();
+
+        // Assert
+        var exception = Assert.Throws<ArgumentNullException>(action);
+        Assert.Equal("Input string cannot be null. (Parameter 'str')", exception.Message);
     }
 
     [Theory]
@@ -48,13 +52,19 @@ public class StringExtensionsTests
     }
 
     [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("   ")]
-    [InlineData("notatime")]
-    public void ToTimeSpan_ThrowsFormatException_OnInvalid(string? time)
+    [InlineData(null, "Input string is null or empty.")]
+    [InlineData("", "Input string is null or empty.")]
+    [InlineData("   ", "Input string is null or empty.")]
+    [InlineData("notatime", "String 'notatime' was not recognized as a valid DateTime.")]
+    public void ToTimeSpan_ThrowsFormatException_OnInvalid(string? time, string expected)
     {
-        // Arrange & Act & Assert
-        Assert.Throws<FormatException>(() => time!.ToTimeSpan());
+        // Arrange - See InlineData
+
+        // Act
+        object? action() => time!.ToTimeSpan();
+
+        // Assert
+        var exception = Assert.Throws<FormatException>(action);
+        Assert.Equal(expected, exception.Message);
     }
 }
