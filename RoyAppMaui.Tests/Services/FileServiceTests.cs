@@ -1,13 +1,10 @@
 using CommunityToolkit.Maui.Storage;
 
-using FakeItEasy;
-
 using RoyAppMaui.Extensions;
-using RoyAppMaui.Services.Impl;
 
 using System.IO.Abstractions.TestingHelpers;
 
-namespace RoyAppMaui.Services.Tests;
+namespace RoyAppMaui.Services.Impl.Tests;
 public class FileServiceTests
 {
     [Theory]
@@ -36,7 +33,7 @@ public class FileServiceTests
         // Assert
         Assert.True(result.IsSuccess);
 
-        var actual = result.Value.ToList();
+        var actual = result.Value;
         Assert.Single(actual);
         Assert.Equal(id, actual[0].Id);
         Assert.Equal(bedtime.ToTimeSpan(), actual[0].Bedtime);
@@ -58,7 +55,7 @@ public class FileServiceTests
 
         // Assert
         Assert.True(actual.IsFailed);
-        Assert.Contains("not found", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("The file at nonexistent.csv was not found.", actual.Errors[0].Message);
     }
 
     [Fact]
@@ -76,7 +73,7 @@ public class FileServiceTests
 
         // Assert
         Assert.True(actual.IsFailed);
-        Assert.Contains("null or empty", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("File path is null or empty.", actual.Errors[0].Message);
     }
 
     [Fact]
@@ -98,7 +95,23 @@ public class FileServiceTests
 
         // Assert
         Assert.True(actual.IsFailed);
-        Assert.Contains("CSV parsing error", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("""
+            CSV parsing error: Invalid TimeSpan format: 'data'.
+            IReader state:
+               ColumnCount: 3
+               CurrentIndex: 1
+               HeaderRecord:
+
+            IParser state:
+               ByteCount: 0
+               CharCount: 13
+               Row: 1
+               RawRow: 1
+               Count: 3
+               RawRecord:
+            bad,data,here
+
+            """, actual.Errors[0].Message);
     }
 
     [Fact]
@@ -117,7 +130,7 @@ public class FileServiceTests
 
         // Assert
         Assert.True(actual.IsFailed);
-        Assert.Contains("unexpected error", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("An unexpected error occurred while reading the file: Value cannot be null. (Parameter 'reader')", actual.Errors[0].Message);
     }
 
     [Fact]
@@ -161,7 +174,7 @@ public class FileServiceTests
 
         // Assert
         Assert.True(actual.IsFailed);
-        Assert.Contains("user canceled", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("user canceled", actual.Errors[0].Message);
     }
 
     [Fact]
@@ -181,7 +194,7 @@ public class FileServiceTests
 
         // Assert
         Assert.True(actual.IsFailed);
-        Assert.Contains("token ring", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("File save error: Oh no, my token ring!", actual.Errors[0].Message);
     }
 
     [Fact]
@@ -221,7 +234,7 @@ public class FileServiceTests
 
         // Assert
         Assert.True(actual.IsFailed);
-        Assert.Contains("user canceled", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("user canceled", actual.Errors[0].Message);
     }
 
     [Fact]
@@ -240,7 +253,7 @@ public class FileServiceTests
 
         // Assert
         Assert.True(actual.IsFailed);
-        Assert.Contains("does not exist", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("Selected file does not exist.", actual.Errors[0].Message);
     }
 
     [Fact]
@@ -261,6 +274,6 @@ public class FileServiceTests
 
         // Assert
         Assert.True(actual.IsFailed);
-        Assert.Contains("not a CSV", actual.Errors[0].Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("Selected file is not a CSV file.", actual.Errors[0].Message);
     }
 }

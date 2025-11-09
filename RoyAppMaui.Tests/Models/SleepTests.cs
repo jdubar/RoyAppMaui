@@ -1,6 +1,4 @@
-﻿using RoyAppMaui.Models;
-
-namespace RoyAppMaui.Tests.Models;
+﻿namespace RoyAppMaui.Models.Tests;
 public class SleepTests
 {
     [Fact]
@@ -9,8 +7,11 @@ public class SleepTests
         // Arrange
         var sleep = new Sleep { Bedtime = new TimeSpan(22, 30, 0) };
 
-        // Act & Assert
-        Assert.Equal(22.5m, sleep.BedtimeAsDecimal);
+        // Act
+        decimal actual = sleep.BedtimeAsDecimal;
+
+        // Assert
+        Assert.Equal(22.5m, actual);
     }
 
     [Fact]
@@ -19,8 +20,11 @@ public class SleepTests
         // Arrange
         var sleep = new Sleep { Waketime = new TimeSpan(6, 15, 0) };
 
-        // Act & Assert
-        Assert.Equal(6.25m, sleep.WaketimeAsDecimal);
+        // Act
+        decimal actual = sleep.WaketimeAsDecimal;
+
+        // Assert
+        Assert.Equal(6.25m, actual);
     }
 
     [Fact]
@@ -29,8 +33,11 @@ public class SleepTests
         // Arrange
         var sleep = new Sleep { Bedtime = new TimeSpan(22, 0, 0) };
 
-        // Act & Assert
-        Assert.Equal("10:00 PM", sleep.BedtimeDisplay);
+        // Act
+        string actual = sleep.BedtimeDisplay;
+
+        // Assert
+        Assert.Equal("10:00 PM", actual);
     }
 
     [Fact]
@@ -39,8 +46,11 @@ public class SleepTests
         // Arrange
         var sleep = new Sleep { Waketime = new TimeSpan(6, 0, 0) };
 
-        // Act & Assert
-        Assert.Equal("06:00 AM", sleep.WaketimeDisplay);
+        // Act
+        string actual = sleep.WaketimeDisplay;
+
+        // Assert
+        Assert.Equal("06:00 AM", actual);
     }
 
     [Theory]
@@ -58,7 +68,10 @@ public class SleepTests
             Waketime = new TimeSpan(wakeHour, wakeMin, 0)
         };
 
-        // Act & Assert
-        Assert.Equal(expected, sleep.Duration);
+        // Act
+        decimal actual = sleep.Duration;
+
+        // Assert
+        Assert.Equal(expected, actual);
     }
 }

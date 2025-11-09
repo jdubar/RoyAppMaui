@@ -2,8 +2,6 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
 
-using FakeItEasy;
-
 using RoyAppMaui.Models;
 
 namespace RoyAppMaui.Converters.Tests;
@@ -70,8 +68,12 @@ public class TimeSpanConverterTests
         var context = new CsvContext(reader);
         A.CallTo(() => _readerRow.Context).Returns(context);
 
-        // Act & Assert
-        Assert.Throws<TypeConverterException>(() => converter.ConvertFromString("notatime", _readerRow, _memberMapData));
+        // Act
+        object action() => converter.ConvertFromString("notatime", _readerRow, _memberMapData);
+
+        // Assert
+        var exception = Assert.Throws<TypeConverterException>(action);
+        Assert.Contains("Invalid TimeSpan format", exception.Message);
     }
 
     [Theory]
