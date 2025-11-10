@@ -5,7 +5,7 @@ public class SleepExtensionsTests
 {
     [Theory]
     [MemberData(nameof(SleepAverageTheoryData))]
-    public void GetAverage_ReturnsCorrectAverage(List<Sleep> sleeps, Func<Sleep, decimal> selector, decimal expected)
+    public void GetAverage_ReturnsCorrectAverage(Sleep[] sleeps, Func<Sleep, decimal> selector, decimal expected)
     {
         // Act
         var actual = sleeps.GetAverage(selector);
@@ -42,27 +42,35 @@ public class SleepExtensionsTests
         Assert.Equal(expected, actual);
     }
 
-    public static TheoryData<List<Sleep>, Func<Sleep, decimal>, decimal> SleepAverageTheoryData => new()
+    public static TheoryData<Sleep[], Func<Sleep, decimal>, decimal> SleepAverageTheoryData => new()
     {
         {
-            new List<Sleep>
-            {
+            [
                 new() { Bedtime = new TimeSpan(2, 0, 0) },
                 new() { Bedtime = new TimeSpan(3, 0, 0) }
-            },
+            ],
             s => s.BedtimeAsDecimal,
             2.5m
         },
         {
-            new List<Sleep>
-            {
+            [
                 new() { Waketime = new TimeSpan(6, 0, 0) },
                 new() { Waketime = new TimeSpan(6, 0, 0) },
                 new() { Waketime = new TimeSpan(6, 0, 0) },
                 new() { Waketime = new TimeSpan(6, 0, 0) }
-            },
+            ],
             s => s.WaketimeAsDecimal,
             6m
+        },
+        {
+            [
+                new() { Waketime = new TimeSpan(2, 15, 0) },
+                new() { Waketime = new TimeSpan(3, 30, 0) },
+                new() { Waketime = new TimeSpan(4, 45, 0) },
+                new() { Waketime = new TimeSpan(5, 50, 0) }
+            ],
+            s => s.WaketimeAsDecimal,
+            4.08m
         }
     };
 
