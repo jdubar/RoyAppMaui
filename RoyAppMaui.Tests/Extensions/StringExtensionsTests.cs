@@ -67,4 +67,25 @@ public class StringExtensionsTests
         var exception = Assert.Throws<FormatException>(action);
         Assert.Equal(expected, exception.Message);
     }
+
+    public class IsFileCsv
+    {
+        [Theory]
+        [InlineData("somefile.csv", true)]
+        [InlineData("somefile.Csv", true)]
+        [InlineData("somefile.CSV", true)]
+        [InlineData("somefile.txt", false)]
+        [InlineData(null, false)]
+        [InlineData("fileWithNoExt", false)]
+        [InlineData("fileWith.csv.txt", false)]
+        [InlineData("fileWith.txt.csv", true)]
+        public void ReturnsExpected_When(string? filePath, bool expected)
+        {
+            // Act
+            var actual = filePath.IsFileCsv();
+
+            // Assert
+            Assert.Equal(expected, actual);
+        }
+    }
 }
