@@ -1,7 +1,7 @@
 using CommunityToolkit.Maui.Storage;
 
 using RoyAppMaui.Extensions;
-
+using RoyAppMaui.Models;
 using System.IO.Abstractions.TestingHelpers;
 
 namespace RoyAppMaui.Services.Impl.Tests;
@@ -150,7 +150,6 @@ public class FileServiceTests
 
         // Assert
         Assert.True(actual.IsSuccess);
-        Assert.True(actual.Value);
     }
 
     [Fact]
@@ -166,7 +165,10 @@ public class FileServiceTests
         var fileSystem = A.Fake<System.IO.Abstractions.IFileSystem>();
         var filePicker = A.Fake<IFilePicker>();
         var fileSaver = A.Fake<IFileSaver>();
-        A.CallTo(() => fileSaver.SaveAsync(A<string>._, A<Stream>._, A<CancellationToken>._)).Returns(new FileSaverResult(null, exception));
+
+        string? returnedFilePathAsNullSignalsUserCanceled = null;
+        A.CallTo(() => fileSaver.SaveAsync(A<string>._, A<Stream>._, A<CancellationToken>._))
+            .Returns(new FileSaverResult(returnedFilePathAsNullSignalsUserCanceled, exception));
         var service = new FileService(fileSystem, fileSaver, filePicker);
 
         // Act
@@ -174,7 +176,8 @@ public class FileServiceTests
 
         // Assert
         Assert.True(actual.IsFailed);
-        Assert.Equal("user canceled", actual.Errors[0].Message);
+        Assert.Single(actual.Errors);
+        Assert.IsType<UserCanceledError>(actual.Errors[0]);
     }
 
     [Fact]
@@ -222,11 +225,13 @@ public class FileServiceTests
     public async Task SelectImportFileAsync_UserCancels_ReturnsFailure()
     {
         // Arrange
-        FileResult? result = null;
         var fileSystem = A.Fake<System.IO.Abstractions.IFileSystem>();
         var filePicker = A.Fake<IFilePicker>();
         var fileSaver = A.Fake<IFileSaver>();
-        A.CallTo(() => filePicker.PickAsync(A<PickOptions>._)).Returns(result);
+
+        FileResult? returnedNullFileResultSignalsUserCanceled = null;
+        A.CallTo(() => filePicker.PickAsync(A<PickOptions>._))
+            .Returns(returnedNullFileResultSignalsUserCanceled);
         var service = new FileService(fileSystem, fileSaver, filePicker);
 
         // Act
@@ -234,7 +239,8 @@ public class FileServiceTests
 
         // Assert
         Assert.True(actual.IsFailed);
-        Assert.Equal("user canceled", actual.Errors[0].Message);
+        Assert.Single(actual.Errors);
+        Assert.IsType<UserCanceledError>(actual.Errors[0]);
     }
 
     [Fact]
