@@ -62,7 +62,7 @@ public class FileService(
         }
     }
 
-    public async Task<Result<bool>> SaveBytesToFileAsync(byte[] buffer, string filePath)
+    public async Task<Result> SaveBytesToFileAsync(byte[] buffer, string filePath)
     {
         try
         {
@@ -70,11 +70,11 @@ public class FileService(
             var result = await fileSaver.SaveAsync(filePath, stream, _cts.Token);
             if (result.FilePath is null)
             {
-                return Result.Fail("user canceled");
+                return new UserCanceledError();
             }
 
             return result.IsSuccessful
-                ? Result.Ok(true)
+                ? Result.Ok()
                 : Result.Fail("Failed to save the file.");
         }
         catch (FileSaveException ex)
@@ -88,7 +88,7 @@ public class FileService(
         var result = await filePicker.PickAsync(PickOptions);
         if (result is null)
         {
-            return Result.Fail("user canceled");
+            return new UserCanceledError();
         }
 
         if (!fileSystem.File.Exists(result.FullPath))

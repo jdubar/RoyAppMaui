@@ -83,7 +83,7 @@ public partial class SleepTable
         var result = await FileService.SelectImportFileAsync();
         if (result.IsFailed)
         {
-            if (!result.Errors[0].Message.Contains("user canceled"))
+            if (!result.HasError<UserCanceledError>())
             {
                 _ = Snackbar.Add(result.Errors[0].Message, Severity.Error);
             }
@@ -151,7 +151,7 @@ public partial class SleepTable
         var result = await FileService.SaveBytesToFileAsync(data, filename);
         if (result.IsFailed)
         {
-            if (!result.Errors[0].Message.Contains("user canceled"))
+            if (!result.HasError<UserCanceledError>())
             {
                 Snackbar.Add("Error saving the file!", Severity.Error);
             }
