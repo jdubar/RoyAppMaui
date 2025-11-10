@@ -22,10 +22,10 @@ public partial class AddModifyItem
         switch (timepicker)
         {
             case TimePickers.Bedtime:
-                ItemToModify.Bedtime = (TimeSpan)newTime;
+                ItemToModify.Bedtime = newTime.Value;
                 break;
             case TimePickers.Waketime:
-                ItemToModify.Waketime = (TimeSpan)newTime;
+                ItemToModify.Waketime = newTime.Value;
                 break;
             default:
                 return;
