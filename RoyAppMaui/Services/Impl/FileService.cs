@@ -6,6 +6,7 @@ using CsvHelper.Configuration;
 using FluentResults;
 
 using RoyAppMaui.ClassMaps;
+using RoyAppMaui.Extensions;
 using RoyAppMaui.Models;
 using RoyAppMaui.Types;
 
@@ -96,10 +97,8 @@ public class FileService(
             return Result.Fail("Selected file does not exist.");
         }
 
-        return IsFileCsv(result.FullPath)
+        return result.FullPath.IsFileCsv()
             ? Result.Ok(result.FullPath)
             : Result.Fail("Selected file is not a CSV file.");
     }
-
-    private bool IsFileCsv(string filePath) => fileSystem.Path.GetExtension(filePath)?.ToLower(CultureInfo.CurrentCulture) == ".csv";
 }

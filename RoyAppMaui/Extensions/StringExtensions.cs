@@ -42,4 +42,6 @@ public static class StringExtensions
         var dateTime = DateTime.ParseExact(time, formats, CultureInfo.InvariantCulture);
         return dateTime.TimeOfDay;
     }
+
+    public static bool IsFileCsv(this string? filePath) => string.Equals(Path.GetExtension(filePath), ".csv", StringComparison.CurrentCultureIgnoreCase);
 }
