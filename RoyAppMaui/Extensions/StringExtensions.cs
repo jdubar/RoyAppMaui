@@ -43,5 +43,11 @@ public static class StringExtensions
         return dateTime.TimeOfDay;
     }
 
+    /// <summary>
+    /// Determines whether the specified file path has a ".csv" extension.
+    /// </summary>
+    /// <remarks>The comparison is performed using the current culture and is case-insensitive.</remarks>
+    /// <param name="filePath">The file path to check. This parameter can be <see langword="null"/>.</param>
+    /// <returns><see langword="true"/> if the file path has a ".csv" extension; otherwise, <see langword="false"/>.</returns>
     public static bool IsFileCsv(this string? filePath) => string.Equals(Path.GetExtension(filePath), ".csv", StringComparison.CurrentCultureIgnoreCase);
 }
