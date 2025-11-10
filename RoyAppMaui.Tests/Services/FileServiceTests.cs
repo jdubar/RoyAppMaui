@@ -150,13 +150,14 @@ public class FileServiceTests
 
         // Assert
         Assert.True(actual.IsSuccess);
+        Assert.Empty(actual.Errors);
     }
 
     [Fact]
     public async Task SaveBytesToFileAsync_SaveFails_ReturnsFailure()
     {
         // Arrange
-        var exception = new Exception()
+        var exception = new OperationCanceledException()
         {
             Source = "UnitTest",
         };
