@@ -12,10 +12,7 @@ public partial class TimeChip
 
     protected override void OnParametersSet()
     {
-        if (Time >= 20m || Time < 6m)
-        {
-            Icon = Icons.Material.Filled.NightsStay;
-            IconColor = MudBlazor.Color.Info;
-        }
+        Icon = Time.GetIconAsSvg(defaultValue: Icon);
+        IconColor = Time.GetIconColor(defaultValue: IconColor);
     }
 }
