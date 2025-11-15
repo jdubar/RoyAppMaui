@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11206.111 d18.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyApp", "RoyApp\RoyApp.csproj", "{C87D2718-EE0C-4BCA-979D-BF74443C0ADA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoyApp.Tests", "RoyApp.Tests\RoyApp.Tests.csproj", "{AE3E9B0E-B957-403B-856B-FBA6187CBE30}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C87D2718-EE0C-4BCA-979D-BF74443C0ADA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C87D2718-EE0C-4BCA-979D-BF74443C0ADA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C87D2718-EE0C-4BCA-979D-BF74443C0ADA}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C87D2718-EE0C-4BCA-979D-BF74443C0ADA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C87D2718-EE0C-4BCA-979D-BF74443C0ADA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C87D2718-EE0C-4BCA-979D-BF74443C0ADA}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{AE3E9B0E-B957-403B-856B-FBA6187CBE30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE3E9B0E-B957-403B-856B-FBA6187CBE30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE3E9B0E-B957-403B-856B-FBA6187CBE30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE3E9B0E-B957-403B-856B-FBA6187CBE30}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B9434AE2-4600-4746-8251-9F5BDAC72904}
+	EndGlobalSection
+EndGlobal

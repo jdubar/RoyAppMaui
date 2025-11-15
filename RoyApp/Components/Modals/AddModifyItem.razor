@@ -1,0 +1,31 @@
+﻿@using RoyApp.Components.Controls
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="_itemForm">
+            <MudTextField @bind-Value="@ItemToModify.Id" Label="Id" Variant="Variant.Outlined" Required RequiredError="An Id must be supplied!" />
+
+            <MudStack Row="true">
+                <TimePicker
+                    Icon="@Icons.Material.Filled.Bed"
+                    Label="Bedtime"
+                    SleepTime="ItemToModify.Bedtime"
+                    SleepTimeChanged="args => OnTimeChange(TimePickers.Bedtime, args)" />
+                <MudField Class="mud-field-decimal-display" Label="Decimal" Variant="Variant.Outlined">@ItemToModify.BedtimeAsDecimalDisplay</MudField>
+            </MudStack>
+
+            <MudStack Row="true">
+                <TimePicker
+                    Icon="@Icons.Material.Filled.Alarm"
+                    Label="Waketime"
+                    SleepTime="ItemToModify.Waketime"
+                    SleepTimeChanged="args => OnTimeChange(TimePickers.Waketime, args)" />
+                <MudField Class="mud-field-decimal-display" Label="Decimal" Variant="Variant.Outlined">@ItemToModify.WaketimeAsDecimalDisplay</MudField>
+            </MudStack>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@Save" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save">Save</MudButton>
+        <MudButton OnClick="@Cancel" Variant="Variant.Filled">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
